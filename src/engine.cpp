@@ -1,10 +1,20 @@
 #include "engine.h"
 
-void UpdateColorBuffer(Engine* engine)
+uint32_t* LoadTexture(const char* filePath)
+{
+    Texture texture;
+    SDL_Surface* tempSurface = SDL_LoadBMP(filePath);
+    texture.pixels = tempSurface.pixels;
+    texture.width = tempSurface.w;
+    texture.height = tempSurface.h;
+    return texture;
+}
+
+void RenderColorBuffer(Engine* engine)
 {
     SDL_UpdateTexture(engine->textureBuffer,
                       0,
-                      (const void*)engine->colorBuffer,
+                      engine->colorBuffer,
                       (int)WNDWIDTH * sizeof(uint32_t));
     SDL_RenderCopy(engine->renderer, engine->textureBuffer, 0, 0);
     SDL_RenderPresent(engine->renderer);
@@ -38,5 +48,14 @@ void DrawRect(uint32_t* buffer, int x, int y, int width, int height, uint32_t co
     }
 }
 
-
+void DrawTexture(uint32_t* buffer, int x, int y, int width, int height, uint32_t* pixels)
+{
+    for(int actual_y = y; actual_y < y + height; actual_y++)
+    {
+        for(int actual_x = x; actual_x < x + width; actual_x++)
+        {
+            DrawPixel(buffer, actual_x, actual_y, pixels[actual_x + (actual_y * width)]);
+        }
+    }
+}
 

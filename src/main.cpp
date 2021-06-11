@@ -6,7 +6,7 @@
 void HandleEvents(Engine* engine)
 {
     SDL_Event event;
-    if(SDL_PollEvent(&event))
+    while(SDL_PollEvent(&event))
     {
         switch (event.type)
         {
@@ -33,16 +33,14 @@ void HandleEvents(Engine* engine)
 void UpdateAndRender(Engine* engine)
 {
     // update stuff 
-    UpdateColorBuffer(engine);
  
     // render stuff
     ClearBuffer(engine->colorBuffer, 0xFF00FF00);
     
     DrawPixel(engine->colorBuffer, 5, 5, 0xFF0000FF);
-
     DrawRect(engine->colorBuffer, -25, 10, 50, 25, 0xFFFF0000);
 
-    SDL_RenderClear(engine->renderer);
+    RenderColorBuffer(engine);
 }
 
 int main(int argc, char* argv[])
@@ -87,5 +85,11 @@ int main(int argc, char* argv[])
         HandleEvents(&engine);
         UpdateAndRender(&engine);
     }
+
+    free(engine.colorBuffer);
+    SDL_DestroyRenderer(engine.renderer);
+    SDL_DestroyWindow(engine.window);
+    SDL_Quit();
+
     return 0;
 }

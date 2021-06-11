@@ -19,9 +19,20 @@ struct Engine
     uint32_t* colorBuffer;
 };
 
-void UpdateColorBuffer(Engine* engine);
+struct Texture
+{
+    uint32_t* pixels;
+    int width;
+    int height;
+};
+
+Texture LoadTexture(const char* filePath);
+
+void RenderColorBuffer(Engine* engine);
 void ClearBuffer(uint32_t* buffer, uint32_t color);
 void DrawPixel(uint32_t* buffer, int x, int y, uint32_t color);
 void DrawRect(uint32_t* buffer, int x, int y, int width, int height, uint32_t color);
+void DrawTexture(uint32_t* buffer, int x, int y, int width, int height, uint32_t* pixels);
+
 
 #endif
