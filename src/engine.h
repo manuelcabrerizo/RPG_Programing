@@ -10,6 +10,13 @@
 // this is the main struct for the enigne
 // here we r going to declear all the variables 
 // that we need to have in all are engine... 
+struct Texture
+{
+    uint32_t* pixels;
+    int width;
+    int height;
+};
+
 struct Engine
 {
     bool isRunning;
@@ -17,13 +24,7 @@ struct Engine
     SDL_Renderer* renderer;
     SDL_Texture* textureBuffer;
     uint32_t* colorBuffer;
-};
-
-struct Texture
-{
-    uint32_t* pixels;
-    int width;
-    int height;
+    Texture image;
 };
 
 Texture LoadTexture(const char* filePath);
