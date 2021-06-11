@@ -39,7 +39,11 @@ void UpdateAndRender(Engine* engine)
     
     DrawPixel(engine->colorBuffer, 5, 5, 0xFF0000FF);
     DrawRect(engine->colorBuffer, -25, 10, 50, 25, 0xFFFF0000);
-    DrawTexture(engine->colorBuffer, 100, 10, engine->image.width, engine->image.height, engine->image.pixels);
+    
+    DrawTexture(engine->colorBuffer, 100, 10,
+                engine->image.width,
+                engine->image.height,
+                engine->image.pixels);
 
     RenderColorBuffer(engine);
 }

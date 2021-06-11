@@ -7,6 +7,7 @@ Texture LoadTexture(const char* filePath)
     texture.pixels = (uint32_t*)tempSurface->pixels;
     texture.width = tempSurface->w;
     texture.height = tempSurface->h;
+    SDL_FreeSurface(tempSurface);
     return texture;
 }
 
@@ -58,9 +59,9 @@ void DrawTexture(uint32_t* buffer, int x, int y, int width, int height, uint32_t
         {
             uint32_t color = pixels[j + (i * width)];
             uint8_t alpha = color >> 24;
-            uint8_t red = color >> 16;
+            uint8_t red   = color >> 16;
             uint8_t green = color >> 8;
-            uint8_t blue = color;
+            uint8_t blue  = color;
             color = alpha << 24 | blue << 16 | green << 8 | red;
             DrawPixel(buffer, actual_x, actual_y, color);
             j++;
