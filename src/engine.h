@@ -21,6 +21,15 @@ struct Texture
     int height;
 };
 
+struct Map
+{
+    int width;
+    int height;
+    int tileWidth;
+    int tileHeight;
+    int* data;
+};
+
 struct Engine
 {
     bool isRunning;
@@ -30,8 +39,10 @@ struct Engine
     uint32_t* colorBuffer;
     Texture image;
     float* uvs;
+    Map map;
 };
 
+Map LoadLuaMap(const char* filePath);
 Texture LoadTexture(const char* filePath);
 
 void RenderColorBuffer(Engine* engine);

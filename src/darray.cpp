@@ -45,6 +45,7 @@ void ArrayFree(void* array)
     if(array != NULL)
     {
         free(ARRAY_RAW_DATA(array));
+        array = NULL;
     }
 }
 

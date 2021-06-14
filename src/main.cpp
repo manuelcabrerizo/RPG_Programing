@@ -33,35 +33,6 @@ void HandleEvents(Engine* engine)
     }
 }
 
-int data[]
-{
-        1, 4, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-        12, 15, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-        94, 83, 83, 83, 83, 83, 83, 83, 83, 83, 73, 70,
-        94, 83, 83, 83, 83, 83, 83, 83, 83, 83, 73, 70,
-        94, 83, 83, 83, 83, 83, 83, 83, 83, 83, 83, 70,
-        94, 83, 83, 83, 83, 83, 83, 83, 83, 83, 83, 70,
-        94, 83, 83, 83, 83, 83, 83, 83, 83, 83, 83, 70,
-        94, 83, 83, 83, 83, 83, 83, 83, 83, 83, 83, 70,
-        94, 83, 83, 83, 83, 83, 83, 83, 83, 83, 83, 70,
-        94, 83, 83, 83, 83, 83, 83, 83, 83, 83, 83, 70,
-        45, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55,
-        56, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66
-};
-
-void TempFunction()
-{
-    for(int i = 0; i < 12*12; i++)
-    {
-        data[i] = data[i] - 1;
-    }
-}
-
-int GetTile(int x, int y, int map[])
-{
-    return map[x + y * 20];
-}
-
 void UpdateAndRender(Engine* engine, float dt)
 {
     // update stuff 
@@ -69,16 +40,16 @@ void UpdateAndRender(Engine* engine, float dt)
     // render stuff
     ClearBuffer(engine->colorBuffer, 0xFF000000);
 
-    for(int y = 0; y < 12; y++)
+    for(int y = 0; y < engine->map.height; y++)
     {
-        for(int x = 0; x < 12; x++)
+        for(int x = 0; x < engine->map.width; x++)
         {
             DrawFrame(engine->colorBuffer,
-              engine->uvs,
-              x * 16,
-              y * 16,
-              data[x + (y * 12)],
-              &engine->image);
+                      engine->uvs,
+                      x * engine->map.tileWidth,
+                      y * engine->map.tileHeight,
+                      engine->map.data[x + y * engine->map.width],
+                      &engine->image);
         }
     }
 
@@ -121,12 +92,12 @@ int main(int argc, char* argv[])
                                              (int)WNDWIDTH,
                                              (int)WNDHEIGHT);
 
+
+    engine.map = LoadLuaMap("./assets/Map.lua");
     engine.image = LoadTexture("./assets/rpg_indoor.bmp");
-    engine.uvs = GenerateUVs(engine.image, 16, 16);
-
-    TempFunction();
-
-
+    engine.uvs = GenerateUVs(engine.image,
+                             engine.map.tileWidth,
+                             engine.map.tileHeight); 
 
     engine.isRunning = true;
 
@@ -145,7 +116,8 @@ int main(int argc, char* argv[])
         UpdateAndRender(&engine, dt);  
         previusFrameTime = currentFrameTime;
     }
-
+    
+    ArrayFree(engine.uvs);
     free(engine.colorBuffer);
     SDL_DestroyRenderer(engine.renderer);
     SDL_DestroyWindow(engine.window);
