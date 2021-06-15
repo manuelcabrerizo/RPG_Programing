@@ -5,6 +5,7 @@
 #include <sol.hpp>
 #include "darray.h"
 #include "map.h"
+#include "entity.h"
 #include "input.h"
 
 #define WNDWIDTH 640
@@ -13,24 +14,6 @@
 // this is the main struct for the enigne
 // here we r going to declear all the variables 
 // that we need to have in all are engine... 
-struct int2
-{
-    int a;
-    int b;
-};
-
-struct Hero
-{
-    int x;
-    int y;
-    int tileX;
-    int tileY;
-    int width;
-    int height;
-    Texture image;
-    float* uvs;
-};
-
 struct Engine
 {
     bool isRunning;
@@ -41,7 +24,7 @@ struct Engine
     Input input;
     
     Map map;
-    Hero hero;
+    Entity hero;
 };
 
 int IntMax(int a, int b);

@@ -6,10 +6,9 @@
 struct Input
 {
 
-    bool keysDown[256];
-    bool keysWasDown[256];
+    bool keysDown[322];
+    bool keysWasDown[322];
 };
-
 
 void SetKeyDown(Input* input, uint32_t scanCode);
 void SetKeyUp(Input* input, uint32_t scanCode);

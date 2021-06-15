@@ -2,6 +2,8 @@
 #include <stdlib.h> 
 
 #include "engine.h"
+#include "waitState.h"
+#include "moveState.h"
 
 #define FPS 60
 #define FRAME_TARGET_TIME (1000 / FPS)
@@ -40,22 +42,6 @@ void HandleEvents(Engine* engine)
         }
     }
 }
-
-int2 GetTileFoot(Map* map, int x, int y)
-{
-    int2 result = {};
-    result.a = map->x + (x * map->tileWidth);
-    result.b = map->y + (y * map->tileHeight) - map->tileHeight / 2;
-    return result;
-}
-
-void Teleport(Hero* hero, Map* map, int tileX, int tileY)
-{
-    int2 result = GetTileFoot(map, tileX, tileY);
-    hero->x = result.a;
-    hero->y = result.b;
-}
-
 
 void UpdateAndRender(Engine* engine, float dt)
 {
@@ -102,7 +88,7 @@ void UpdateAndRender(Engine* engine, float dt)
               engine->hero.uvs,
               engine->hero.x,
               engine->hero.y,
-              8,
+              engine->hero.frame,
               &engine->hero.image);
 
     RenderColorBuffer(engine);
@@ -145,13 +131,21 @@ int main(int argc, char* argv[])
                                              (int)WNDHEIGHT);
 
     LoadMap(&engine.map, "./assets/Map.lua", "./assets/rpg_indoor.bmp");
+    LoadEntity(&engine.hero, "./assets/walk_cycle.bmp");
+    SetEntityFrame(&engine.hero, 8);
+    Teleport(&engine.hero,
+             &engine.map,
+             engine.hero.tileX,
+             engine.hero.tileY);
 
-    engine.hero.width = 16;
-    engine.hero.height = 24;
-    engine.hero.image = LoadTexture("./assets/walk_cycle.bmp");
-    engine.hero.uvs = GenerateUVs(engine.hero.image,
-                                  engine.hero.width,
-                                  engine.hero.height);
+    WaitState wState;
+    MoveState mState; 
+    PushSate(&engine.hero.controller, &mState);
+    PopState(&engine.hero.controller); 
+    PushSate(&engine.hero.controller, &wState);
+    PopState(&engine.hero.controller);
+    ChageState(&engine.hero.controller, &mState);
+
     engine.isRunning = true;
 
     uint32_t previusFrameTime = 0;
