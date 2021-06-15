@@ -3,10 +3,9 @@
 
 #include <SDL2/SDL.h>
 #include <sol.hpp>
-
-#include <stdint.h>
-
-#include "darray.h" 
+#include "darray.h"
+#include "map.h"
+#include "input.h"
 
 #define WNDWIDTH 640
 #define WNDHEIGHT 480
@@ -14,22 +13,6 @@
 // this is the main struct for the enigne
 // here we r going to declear all the variables 
 // that we need to have in all are engine... 
-struct Texture
-{
-    uint32_t* pixels;
-    int width;
-    int height;
-};
-
-struct Map
-{
-    int width;
-    int height;
-    int tileWidth;
-    int tileHeight;
-    int* data;
-};
-
 struct Engine
 {
     bool isRunning;
@@ -37,13 +20,13 @@ struct Engine
     SDL_Renderer* renderer;
     SDL_Texture* textureBuffer;
     uint32_t* colorBuffer;
-    Texture image;
-    float* uvs;
+    Input input;
+    
     Map map;
 };
 
-Map LoadLuaMap(const char* filePath);
-Texture LoadTexture(const char* filePath);
+int IntMax(int a, int b);
+int IntMin(int a, int b);
 
 void RenderColorBuffer(Engine* engine);
 void ClearBuffer(uint32_t* buffer, uint32_t color);

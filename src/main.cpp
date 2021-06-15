@@ -20,10 +20,18 @@ void HandleEvents(Engine* engine)
             }break;
             case SDL_KEYDOWN:
             {
-                if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+                uint32_t scanCode = event.key.keysym.scancode;
+                if(scanCode == SDL_SCANCODE_ESCAPE)
                 {
                     engine->isRunning = false;
                 }
+                SetKeyDown(&engine->input, scanCode);
+
+            }break;
+            case SDL_KEYUP:
+            {
+                uint32_t scanCode = event.key.keysym.scancode;
+                SetKeyUp(&engine->input, scanCode);
             }break;
             default:
             {
@@ -36,22 +44,26 @@ void HandleEvents(Engine* engine)
 void UpdateAndRender(Engine* engine, float dt)
 {
     // update stuff 
- 
+    if(GetKeyDown(&engine->input, SDL_SCANCODE_A))
+    {
+        engine->map.x += round(400 * dt);
+    }
+    if(GetKeyDown(&engine->input, SDL_SCANCODE_D))
+    {
+        engine->map.x -= round(400 * dt);
+    }
+    if(GetKeyDown(&engine->input, SDL_SCANCODE_W))
+    {
+        engine->map.y += round(400 * dt);
+    }
+    if(GetKeyDown(&engine->input, SDL_SCANCODE_S))
+    { 
+        engine->map.y -= round(400 * dt);
+    }
     // render stuff
     ClearBuffer(engine->colorBuffer, 0xFF000000);
 
-    for(int y = 0; y < engine->map.height; y++)
-    {
-        for(int x = 0; x < engine->map.width; x++)
-        {
-            DrawFrame(engine->colorBuffer,
-                      engine->uvs,
-                      x * engine->map.tileWidth,
-                      y * engine->map.tileHeight,
-                      engine->map.data[x + y * engine->map.width],
-                      &engine->image);
-        }
-    }
+    DrawMap(engine->colorBuffer, &engine->map);
 
     RenderColorBuffer(engine);
 }
@@ -92,12 +104,7 @@ int main(int argc, char* argv[])
                                              (int)WNDWIDTH,
                                              (int)WNDHEIGHT);
 
-
-    engine.map = LoadLuaMap("./assets/Map.lua");
-    engine.image = LoadTexture("./assets/rpg_indoor.bmp");
-    engine.uvs = GenerateUVs(engine.image,
-                             engine.map.tileWidth,
-                             engine.map.tileHeight); 
+    LoadMap(&engine.map, "./assets/larger_map.lua", "./assets/cave16x16.bmp");
 
     engine.isRunning = true;
 
@@ -117,7 +124,7 @@ int main(int argc, char* argv[])
         previusFrameTime = currentFrameTime;
     }
     
-    ArrayFree(engine.uvs);
+    ArrayFree(engine.map.uvs);
     free(engine.colorBuffer);
     SDL_DestroyRenderer(engine.renderer);
     SDL_DestroyWindow(engine.window);

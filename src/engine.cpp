@@ -2,67 +2,16 @@
 #include <math.h>
 #include "engine.h"
 
-
-Map LoadLuaMap(const char* filePath)
+int IntMax(int a, int b)
 {
-    Map map = {};
-
-    sol::state lua;
-    lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::math);
-    lua.script_file(filePath);
-
-    sol::table map_t = lua["map"];
-    sol::optional<sol::table> exist_map = lua["map"];
-    if(exist_map == sol::nullopt)
-    {
-        printf("ERROR::LUA::FILE::NOT::FOUND\n");
-    }
-    else
-    { 
-        map.width = (int)map_t["width"];
-        map.height = (int)map_t["height"];
-        map.tileWidth = (int)map_t["tilewidth"];
-        map.tileHeight = (int)map_t["tileheight"];
-
-        sol::table layer = map_t["layers"];
-        sol::optional<sol::table> exist_layer = map_t["layers"];
-        if(exist_layer == sol::nullopt)
-        {
-            printf("ERROR::LAYERS::NOT::FOUND\n");
-        }
-        else
-        {
-            int layerIndex = 0;
-            while(true)
-            {
-                sol::optional<sol::table> exist_index_layer = layer[layerIndex];
-                if(exist_index_layer == sol::nullopt)
-                {
-                    break;
-                }
-                else
-                {
-                    sol::table data = layer[layerIndex]["data"]; 
-                    for(int i = 0; i < (map.width * map.height); i++)
-                    {
-                        ArrayPush(map.data, (int)data[i + 1] - 1, int); 
-                    }
-                }
-                layerIndex++;
-            } 
-        }        
-    }
-    return map; 
+    if(a > b) return a;
+    return b;
 }
 
-Texture LoadTexture(const char* filePath)
+int IntMin(int a, int b)
 {
-    Texture texture;
-    SDL_Surface* tempSurface = SDL_LoadBMP(filePath);
-    texture.pixels = (uint32_t*)tempSurface->pixels;
-    texture.width = tempSurface->w;
-    texture.height = tempSurface->h;
-    return texture;
+    if(a < b) return a;
+    return b;
 }
 
 void RenderColorBuffer(Engine* engine)
@@ -85,7 +34,7 @@ void ClearBuffer(uint32_t* buffer, uint32_t color)
 
 void DrawPixel(uint32_t* buffer, int x, int y, uint32_t color)
 {
-    if(x >= 0 && y >= 0 && x <= (int)WNDWIDTH && y <= (int)WNDHEIGHT)
+    if(x >= 0 && y >= 0 && x < (int)WNDWIDTH && y < (int)WNDHEIGHT)
     {
         buffer[x + (y * (int)WNDWIDTH)] = color;
     }
