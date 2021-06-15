@@ -2,14 +2,27 @@
 
 void SetKeyDown(Input* input, uint32_t scanCode)
 {
-    input->keysDown[scanCode] = true;
-    input->keysUp[scanCode] = false;
+    input->keysDown[scanCode] = true;    
 }
 
 void SetKeyUp(Input* input, uint32_t scanCode)
 {
     input->keysDown[scanCode] = false;
-    input->keysUp[scanCode] = true;
+    input->keysWasDown[scanCode] = false;
+}
+
+bool GetKeyJustDown(Input* input, uint32_t scanCode)
+{
+    if(input->keysDown[scanCode] && !input->keysWasDown[scanCode]) 
+    {
+        input->keysWasDown[scanCode] = true;
+        return input->keysDown[scanCode];
+    }
+    else
+    {
+        input->keysDown[scanCode] = false;
+        return input->keysDown[scanCode];
+    }
 }
 
 bool GetKeyDown(Input* input, uint32_t scanCode)
@@ -17,10 +30,5 @@ bool GetKeyDown(Input* input, uint32_t scanCode)
     return input->keysDown[scanCode];
 }
 
-bool GetKeyUp(Input* input, uint32_t scanCode)
-{
-    input->keysUp[scanCode] = false;
-    return input->keysUp[scanCode];
-}
 
 

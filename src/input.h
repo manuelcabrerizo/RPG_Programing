@@ -7,14 +7,13 @@ struct Input
 {
 
     bool keysDown[256];
-    bool keysUp[256];
+    bool keysWasDown[256];
 };
 
 
 void SetKeyDown(Input* input, uint32_t scanCode);
 void SetKeyUp(Input* input, uint32_t scanCode);
-
+bool GetKeyJustDown(Input* input, uint32_t scanCode);
 bool GetKeyDown(Input* input, uint32_t scanCode);
-bool GetKeyUp(Input* input, uint32_t scanCode);
 
 #endif

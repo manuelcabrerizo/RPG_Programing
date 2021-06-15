@@ -15,6 +15,9 @@ struct Map
     Texture image;
     float* uvs;
 
+    int camX;
+    int camY;
+
     int topTile;
     int leftTile;
     int bottomTile;

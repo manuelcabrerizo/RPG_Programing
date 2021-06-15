@@ -41,29 +41,69 @@ void HandleEvents(Engine* engine)
     }
 }
 
+int2 GetTileFoot(Map* map, int x, int y)
+{
+    int2 result = {};
+    result.a = map->x + (x * map->tileWidth);
+    result.b = map->y + (y * map->tileHeight) - map->tileHeight / 2;
+    return result;
+}
+
+void Teleport(Hero* hero, Map* map, int tileX, int tileY)
+{
+    int2 result = GetTileFoot(map, tileX, tileY);
+    hero->x = result.a;
+    hero->y = result.b;
+}
+
+
 void UpdateAndRender(Engine* engine, float dt)
 {
     // update stuff 
-    if(GetKeyDown(&engine->input, SDL_SCANCODE_A))
+    if(GetKeyJustDown(&engine->input, SDL_SCANCODE_A))
     {
-        engine->map.x += round(400 * dt);
+        engine->hero.tileX -= 1;
+        Teleport(&engine->hero,
+                 &engine->map,
+                 engine->hero.tileX,
+                 engine->hero.tileY);
     }
-    if(GetKeyDown(&engine->input, SDL_SCANCODE_D))
+    else if(GetKeyJustDown(&engine->input, SDL_SCANCODE_D))
     {
-        engine->map.x -= round(400 * dt);
+        engine->hero.tileX += 1;
+        Teleport(&engine->hero,
+                 &engine->map,
+                 engine->hero.tileX,
+                 engine->hero.tileY);
     }
-    if(GetKeyDown(&engine->input, SDL_SCANCODE_W))
+    else if(GetKeyJustDown(&engine->input, SDL_SCANCODE_W))
     {
-        engine->map.y += round(400 * dt);
+        engine->hero.tileY -= 1;
+        Teleport(&engine->hero,
+                 &engine->map,
+                 engine->hero.tileX,
+                 engine->hero.tileY);
     }
-    if(GetKeyDown(&engine->input, SDL_SCANCODE_S))
+    else if(GetKeyJustDown(&engine->input, SDL_SCANCODE_S))
     { 
-        engine->map.y -= round(400 * dt);
+        engine->hero.tileY += 1;
+        Teleport(&engine->hero,
+                 &engine->map,
+                 engine->hero.tileX,
+                 engine->hero.tileY);
     }
+
     // render stuff
     ClearBuffer(engine->colorBuffer, 0xFF000000);
 
     DrawMap(engine->colorBuffer, &engine->map);
+
+    DrawFrame(engine->colorBuffer,
+              engine->hero.uvs,
+              engine->hero.x,
+              engine->hero.y,
+              8,
+              &engine->hero.image);
 
     RenderColorBuffer(engine);
 }
@@ -104,8 +144,14 @@ int main(int argc, char* argv[])
                                              (int)WNDWIDTH,
                                              (int)WNDHEIGHT);
 
-    LoadMap(&engine.map, "./assets/larger_map.lua", "./assets/cave16x16.bmp");
+    LoadMap(&engine.map, "./assets/Map.lua", "./assets/rpg_indoor.bmp");
 
+    engine.hero.width = 16;
+    engine.hero.height = 24;
+    engine.hero.image = LoadTexture("./assets/walk_cycle.bmp");
+    engine.hero.uvs = GenerateUVs(engine.hero.image,
+                                  engine.hero.width,
+                                  engine.hero.height);
     engine.isRunning = true;
 
     uint32_t previusFrameTime = 0;
