@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <cstdarg>
-using namespace std;
 
 // create tree callbacks functions 
 typedef void (*OnEnterFunc)(va_list* valist, int num);

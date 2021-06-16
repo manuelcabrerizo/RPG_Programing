@@ -44,38 +44,13 @@ void HandleEvents(Engine* engine)
 void UpdateAndRender(Engine* engine, float dt)
 {
     // update stuff 
-    if(GetKeyJustDown(&engine->input, SDL_SCANCODE_A))
-    {
-        engine->hero.tileX -= 1;
-        Teleport(&engine->hero,
-                 &engine->map,
-                 engine->hero.tileX,
-                 engine->hero.tileY);
-    }
-    else if(GetKeyJustDown(&engine->input, SDL_SCANCODE_D))
-    {
-        engine->hero.tileX += 1;
-        Teleport(&engine->hero,
-                 &engine->map,
-                 engine->hero.tileX,
-                 engine->hero.tileY);
-    }
-    else if(GetKeyJustDown(&engine->input, SDL_SCANCODE_W))
-    {
-        engine->hero.tileY -= 1;
-        Teleport(&engine->hero,
-                 &engine->map,
-                 engine->hero.tileX,
-                 engine->hero.tileY);
-    }
-    else if(GetKeyJustDown(&engine->input, SDL_SCANCODE_S))
-    { 
-        engine->hero.tileY += 1;
-        Teleport(&engine->hero,
-                 &engine->map,
-                 engine->hero.tileX,
-                 engine->hero.tileY);
-    }
+    
+    engine->sm.Update(dt, 4,
+                      (void*)&engine->hero,
+                      (void*)&engine->map,
+                      (void*)&engine->input,
+                      (void*)&engine->sm);
+   UpdateEntityAnim(&engine->hero, dt); 
 
     // render stuff
     ClearBuffer(engine->colorBuffer, 0xFF000000);
@@ -135,17 +110,9 @@ int main(int argc, char* argv[])
              &engine.map,
              engine.hero.tileX,
              engine.hero.tileY);
-
-    StateMachineFP sm;
-    
-    sm.PushState(engine.hero.waitState, 2,
-                (void*)&engine.hero,
-                (void*)&engine.map);
-
-    sm.PopState(0);
-    sm.PushState(engine.hero.moveState, 0);
-    sm.Update(0.0f, 0);
-    sm.PopState(0);
+ 
+    engine.sm.PushState(engine.hero.waitState, 1,
+                       (void*)&engine.hero); 
 
     engine.isRunning = true;
 

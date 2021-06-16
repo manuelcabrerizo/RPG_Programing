@@ -12,7 +12,6 @@ struct int2
     int b;
 };
 
-
 struct Entity
 {
     int x;
@@ -27,8 +26,19 @@ struct Entity
     
     StateFP waitState;
     StateFP moveState;
+
+    int xMove;
+    int yMove;
+
+    int* actualAnim;
+    int numFrames;
+    int upAnim[4];
+    int downAnim[4];
+    int leftAnim[4];
+    int rightAnim[4];
 };
 
+void UpdateEntityAnim(Entity* entity, float dt);
 void SetEntityFrame(Entity* entity, int frame);
 void LoadEntity(Entity* entity, const char* textureFilePath);
 int2 GetTileFoot(Map* map, int x, int y);

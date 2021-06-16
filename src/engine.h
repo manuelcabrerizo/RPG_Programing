@@ -25,6 +25,8 @@ struct Engine
     
     Map map;
     Entity hero;
+
+    StateMachineFP sm;
 };
 
 int IntMax(int a, int b);

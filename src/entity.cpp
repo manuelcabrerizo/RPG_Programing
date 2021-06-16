@@ -15,9 +15,32 @@ void LoadEntity(Entity* entity, const char* textureFilePath)
     entity->uvs = GenerateUVs(entity->image,
                               entity->width,
                               entity->height);
+    for(int i = 0; i < 4; i++)
+    {
+        entity->upAnim[i] = i;
+        entity->rightAnim[i] = i + 4;
+        entity->downAnim[i] = i + 8;
+        entity->leftAnim[i] = i + 12;
+    }
+    entity->actualAnim = entity->downAnim;
+    entity->numFrames = 4;
 
     InitState(&entity->waitState, WaitStateOnEnter, WaitStateOnExit, WaitStateUpdate);
     InitState(&entity->moveState, MoveStateOnEnter, MoveStateOnExit, MoveStateUpdate);
+}
+
+void UpdateEntityAnim(Entity* entity, float dt)
+{
+    if(entity->numFrames > 1)
+    {
+        static float time = 0.0f;
+        SetEntityFrame(entity, entity->actualAnim[(int)time]);
+        time += dt * 10.0f;
+        if(time >= entity->numFrames)
+        {
+            time = 0.0f;
+        }
+    }
 }
 
 void SetEntityFrame(Entity* entity, int frame)
