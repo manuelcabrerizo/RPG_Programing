@@ -16,7 +16,6 @@ void MoveStateOnEnter(va_list* valist, int num)
 
 void MoveStateOnExit(va_list* valist, int num)
 {
-    va_list actual_Valist = *valist; 
     Entity* entity = NULL;
     Map* map = NULL;
  
@@ -24,11 +23,11 @@ void MoveStateOnExit(va_list* valist, int num)
     {
         if(i == 0)
         {
-            entity = va_arg(actual_Valist, Entity*);
+            entity = va_arg(*valist, Entity*);
         }
         if(i == 1)
         {
-            map = va_arg(actual_Valist, Map*);
+            map = va_arg(*valist, Map*);
         }
     }
     
@@ -40,7 +39,6 @@ void MoveStateOnExit(va_list* valist, int num)
 void MoveStateUpdate(va_list* valist, int num, float dt)
 {
     //printf("MOVE ON UPDATE\n");
-    va_list actual_Valist = *valist; 
     Entity* entity = NULL;
     Map* map = NULL;
     Input* input = NULL;
@@ -50,19 +48,19 @@ void MoveStateUpdate(va_list* valist, int num, float dt)
     {
         if(i == 0)
         {
-            entity = va_arg(actual_Valist, Entity*);
+            entity = va_arg(*valist, Entity*);
         }
         if(i == 1)
         {
-            map = va_arg(actual_Valist, Map*);
+            map = va_arg(*valist, Map*);
         }
         if(i == 2)
         {
-            input = va_arg(actual_Valist, Input*);
+            input = va_arg(*valist, Input*);
         }
         if(i == 3)
         {
-            sm = va_arg(actual_Valist, StateMachineFP*);
+            sm = va_arg(*valist, StateMachineFP*);
         }
     }
 

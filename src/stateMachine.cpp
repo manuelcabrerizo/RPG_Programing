@@ -35,6 +35,8 @@ void StateMachineFP::ChangeState(StateFP state, int num, ...)
     va_start(valist, num);
     this->states.back().OnExit(&valist, num);
     this->states.clear();
+    va_end(valist);
+    va_start(valist, num);
     this->states.push_back(state);
     this->states.back().OnEnter(&valist, num);
     va_end(valist);
