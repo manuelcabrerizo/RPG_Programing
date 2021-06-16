@@ -1,30 +1,33 @@
 #ifndef STATEMACHINE_H
 #define STATEMACHINE_H
 
-/*
-#define PushSate(stateMachine, state, type) \
-    do { \
-       ArrayPushState(stateMachine.states, state, type); \
-       stateMachine.numberOfStates++; \
-       stateMachine.states[stateMachine.numberOfStates - 1]->OnEnter(); \
-    } while (0); 
-*/
-struct State
+#include <vector>
+
+// create tree callbacks functions 
+typedef void (*OnEnterFunc)();
+typedef void (*OnExitFunc)();
+typedef void (*UpdateFunc)(float);
+
+struct StateFP
 {
-    virtual void OnEnter() = 0;
-    virtual void OnExit() = 0;
-    virtual void Update() = 0;
+    OnEnterFunc OnEnter;
+    OnExitFunc OnExit;
+    UpdateFunc Update;
 };
 
-struct StateMachine
-{
-    State** states;
-    int numberOfStates;
-};
+void InitState(StateFP* state,
+               OnEnterFunc OnEnter,
+               OnExitFunc OnExit,
+               UpdateFunc Update);
 
-void PushSate(StateMachine* stateMachine, State* state);
-void PopState(StateMachine* stateMachine);
-void ChageState(StateMachine* stateMachine, State* state);
-void UpdateStateMachine(StateMachine* stateMachine);
+struct StateMachineFP
+{
+    std::vector<StateFP> states; 
+    void PushState(StateFP state);
+    void PopState();
+    void ChangeState(StateFP state);
+    void ClearStates();
+    void Update(float dt);
+};
 
 #endif

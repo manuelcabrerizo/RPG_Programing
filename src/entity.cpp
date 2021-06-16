@@ -1,6 +1,9 @@
 #include "entity.h"
 #include "engine.h"
 
+#include "waitState.h"
+#include "moveState.h"
+
 void LoadEntity(Entity* entity, const char* textureFilePath)
 {
     entity->width = 16;
@@ -12,6 +15,9 @@ void LoadEntity(Entity* entity, const char* textureFilePath)
     entity->uvs = GenerateUVs(entity->image,
                               entity->width,
                               entity->height);
+
+    InitState(&entity->waitState, WaitStateOnEnter, WaitStateOnExit, WaitStateUpdate);
+    InitState(&entity->moveState, MoveStateOnEnter, MoveStateOnExit, MoveStateUpdate);
 }
 
 void SetEntityFrame(Entity* entity, int frame)

@@ -2,8 +2,6 @@
 #include <stdlib.h> 
 
 #include "engine.h"
-#include "waitState.h"
-#include "moveState.h"
 
 #define FPS 60
 #define FRAME_TARGET_TIME (1000 / FPS)
@@ -138,13 +136,12 @@ int main(int argc, char* argv[])
              engine.hero.tileX,
              engine.hero.tileY);
 
-    WaitState wState;
-    MoveState mState; 
-    PushSate(&engine.hero.controller, &mState);
-    PopState(&engine.hero.controller); 
-    PushSate(&engine.hero.controller, &wState);
-    PopState(&engine.hero.controller);
-    ChageState(&engine.hero.controller, &mState);
+    StateMachineFP sm;
+    sm.PushState(engine.hero.waitState);
+    sm.PopState();
+    sm.PushState(engine.hero.moveState);
+    sm.Update(0.0f);
+    sm.PopState();
 
     engine.isRunning = true;
 

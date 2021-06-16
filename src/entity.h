@@ -3,6 +3,7 @@
 
 #include "texture.h"
 #include "map.h"
+
 #include "stateMachine.h"
 
 struct int2
@@ -22,15 +23,14 @@ struct Entity
     int frame;
     Texture image;
     float* uvs;
-    StateMachine controller;
+    
+    StateFP waitState;
+    StateFP moveState;
 };
-
 
 void SetEntityFrame(Entity* entity, int frame);
 void LoadEntity(Entity* entity, const char* textureFilePath);
 int2 GetTileFoot(Map* map, int x, int y);
 void Teleport(Entity* entity, Map* map, int tileX, int tileY);
-
-
 
 #endif

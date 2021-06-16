@@ -1,17 +1,21 @@
 #ifndef WAITSTATE_H
 #define WAITSTATE_H
 
+#include <stdio.h>
 
-#include "stateMachine.h"
-#include "entity.h"
-
-struct WaitState : public State
+void WaitStateOnEnter()
 {
-    virtual void OnEnter();
-    virtual void OnExit();
-    virtual void Update();
-    Entity* entity;
-    Map* map;
-};
+    printf("WAIT ON ENTER\n");
+}
+
+void WaitStateOnExit()
+{
+    printf("WAIT ON EXIT\n");
+}
+
+void WaitStateUpdate(float dt)
+{
+    printf("WAIT ON UPDATE\n");
+}
 
 #endif

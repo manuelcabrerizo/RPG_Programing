@@ -1,17 +1,21 @@
 #ifndef MOVESTATE_H
 #define MOVESTATE_H
 
-#include "stateMachine.h"
-#include "entity.h"
+#include <stdio.h>
 
-struct MoveState : public State
+void MoveStateOnEnter()
 {
-    virtual void OnEnter();
-    virtual void OnExit();
-    virtual void Update();
-    Entity* entity;
-    Map* map;
-};
+    printf("MOVE ON ENTER\n");
+}
 
+void MoveStateOnExit()
+{
+    printf("MOVE ON EXIT\n");
+}
+
+void MoveStateUpdate(float dt)
+{
+    printf("MOVE ON UPDATE\n");
+}
 
 #endif

@@ -1,31 +1,43 @@
 #include "stateMachine.h"
-#include "darray.h"
 
-
-void ChageState(StateMachine* stateMachine, State* state)
+void InitState(StateFP* state,
+               OnEnterFunc OnEnter,
+               OnExitFunc OnExit,
+               UpdateFunc Update)
 {
-    stateMachine->states[stateMachine->numberOfStates - 1]->OnExit();
-    ArrayFree(stateMachine->states);
-    stateMachine->states = 0;
-    stateMachine->numberOfStates = 0;
-    PushSate(stateMachine, state);
+    state->OnEnter = OnEnter;
+    state->OnExit = OnExit;
+    state->Update = Update;
 }
 
-void PushSate(StateMachine* stateMachine, State* state)
+void StateMachineFP::PushState(StateFP state)
 {
-    ArrayPush(stateMachine->states, state, State*);
-    stateMachine->numberOfStates++;
-    stateMachine->states[stateMachine->numberOfStates - 1]->OnEnter();
+    this->states.push_back(state);
+    state.OnEnter();
 }
 
-void PopState(StateMachine* stateMachine)
+void StateMachineFP::PopState()
 {
-    stateMachine->states[stateMachine->numberOfStates - 1]->OnExit();
+    this->states.back().OnExit();
+    this->states.pop_back();
 }
 
-void UpdateStateMachine(StateMachine* stateMachine)
+void StateMachineFP::ChangeState(StateFP state)
 {
-    stateMachine->states[stateMachine->numberOfStates - 1]->Update();
+    this->states.back().OnExit();
+    this->states.clear();
+    this->PushState(state);
+}
+
+void StateMachineFP::ClearStates()
+{
+    this->states.back().OnExit();
+    this->states.clear();
+}
+
+void StateMachineFP::Update(float dt)
+{
+    this->states.back().Update(dt);
 }
 
 
