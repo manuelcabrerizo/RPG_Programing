@@ -8,8 +8,10 @@ void LoadEntity(Entity* entity, const char* textureFilePath)
 {
     entity->width = 16;
     entity->height = 24;
-    entity->tileX = 10;
-    entity->tileY = 2;
+    entity->tileX = 6;
+    entity->tileY = 6;
+    entity->x = entity->tileX * entity->width;
+    entity->y = entity->tileY * entity->width;
     entity->frame = 0;
     entity->image = LoadTexture(textureFilePath);
     entity->uvs = GenerateUVs(entity->image,

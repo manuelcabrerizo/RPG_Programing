@@ -4,7 +4,7 @@
 Map LoadLuaMap(const char* filePath)
 {
     Map map = {};
-
+    
     sol::state lua;
     lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::math);
     lua.script_file(filePath);
@@ -73,8 +73,6 @@ void LoadMap(Map* map, const char* luaFilePath, const char* textureFilePath)
     map->uvs = GenerateUVs(map->image,
                            map->tileWidth,
                            map->tileHeight);
-    map->x = 0;
-    map->y = 0;
 }
 
 void DrawMap(uint32_t* buffer, Map* map)

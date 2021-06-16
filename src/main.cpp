@@ -106,10 +106,16 @@ int main(int argc, char* argv[])
     LoadMap(&engine.map, "./assets/Map.lua", "./assets/rpg_indoor.bmp");
     LoadEntity(&engine.hero, "./assets/walk_cycle.bmp");
     SetEntityFrame(&engine.hero, 8);
+
+    engine.map.x = -(int)engine.hero.x;
+    engine.map.y = -(int)engine.hero.y - engine.map.tileHeight / 2;
+    engine.map.x += WNDWIDTH  / 2;
+    engine.map.y += WNDHEIGHT / 2;
+
     Teleport(&engine.hero,
              &engine.map,
              engine.hero.tileX,
-             engine.hero.tileY);
+             engine.hero.tileY); 
  
     engine.sm.PushState(engine.hero.waitState, 1,
                        (void*)&engine.hero); 

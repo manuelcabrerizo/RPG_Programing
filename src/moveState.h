@@ -96,8 +96,10 @@ void MoveStateUpdate(va_list* valist, int num, float dt)
     float yC = yB - yA;
     float rX = xA + (xC * time);
     float rY = yA + (yC * time); 
-    entity->x = (int)rX;
-    entity->y = (int)rY - map->tileHeight / 2;
+    map->x = -(int)rX;
+    map->y = -(int)rY - map->tileHeight / 2;
+    map->x += WNDWIDTH / 2;
+    map->y += WNDHEIGHT / 2;
     if(time >= 1.0f)
     {
         time = 0.0f;
