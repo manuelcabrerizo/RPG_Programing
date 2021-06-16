@@ -137,11 +137,15 @@ int main(int argc, char* argv[])
              engine.hero.tileY);
 
     StateMachineFP sm;
-    sm.PushState(engine.hero.waitState);
-    sm.PopState();
-    sm.PushState(engine.hero.moveState);
-    sm.Update(0.0f);
-    sm.PopState();
+    
+    sm.PushState(engine.hero.waitState, 2,
+                (void*)&engine.hero,
+                (void*)&engine.map);
+
+    sm.PopState(0);
+    sm.PushState(engine.hero.moveState, 0);
+    sm.Update(0.0f, 0);
+    sm.PopState(0);
 
     engine.isRunning = true;
 

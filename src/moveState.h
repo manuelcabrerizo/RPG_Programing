@@ -2,18 +2,22 @@
 #define MOVESTATE_H
 
 #include <stdio.h>
+#include <cstdarg>
 
-void MoveStateOnEnter()
+#include "map.h"
+#include "entity.h"
+
+void MoveStateOnEnter(va_list* valist, int num)
 {
-    printf("MOVE ON ENTER\n");
+    printf("MOVE ON ENTER\n"); 
 }
 
-void MoveStateOnExit()
+void MoveStateOnExit(va_list* valist, int num)
 {
     printf("MOVE ON EXIT\n");
 }
 
-void MoveStateUpdate(float dt)
+void MoveStateUpdate(va_list* valist, int num, float dt)
 {
     printf("MOVE ON UPDATE\n");
 }

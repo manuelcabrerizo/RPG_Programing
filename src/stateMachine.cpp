@@ -10,34 +10,41 @@ void InitState(StateFP* state,
     state->Update = Update;
 }
 
-void StateMachineFP::PushState(StateFP state)
+void StateMachineFP::PushState(StateFP state, int num, ...)
 {
+    va_list valist;
+    va_start(valist, num);
     this->states.push_back(state);
-    state.OnEnter();
+    state.OnEnter(&valist, num);
+    va_end(valist);
 }
 
-void StateMachineFP::PopState()
+void StateMachineFP::PopState(int num, ...)
 {
-    this->states.back().OnExit();
+    va_list valist;
+    this->states.back().OnExit(&valist, num);
     this->states.pop_back();
 }
 
-void StateMachineFP::ChangeState(StateFP state)
+void StateMachineFP::ChangeState(StateFP state, int num, ...)
 {
-    this->states.back().OnExit();
+    va_list valist;
     this->states.clear();
-    this->PushState(state);
+    this->states.push_back(state);
+    state.OnEnter(&valist, num);
+
+
 }
 
 void StateMachineFP::ClearStates()
 {
-    this->states.back().OnExit();
     this->states.clear();
 }
 
-void StateMachineFP::Update(float dt)
+void StateMachineFP::Update(float dt, int num, ...)
 {
-    this->states.back().Update(dt);
+    va_list valist;
+    this->states.back().Update(&valist, num, dt);
 }
 
 

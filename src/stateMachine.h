@@ -2,11 +2,13 @@
 #define STATEMACHINE_H
 
 #include <vector>
+#include <cstdarg>
+using namespace std;
 
 // create tree callbacks functions 
-typedef void (*OnEnterFunc)();
-typedef void (*OnExitFunc)();
-typedef void (*UpdateFunc)(float);
+typedef void (*OnEnterFunc)(va_list* valist, int num);
+typedef void (*OnExitFunc)(va_list* valist, int num);
+typedef void (*UpdateFunc)(va_list* valist, int num, float dt);
 
 struct StateFP
 {
@@ -23,11 +25,11 @@ void InitState(StateFP* state,
 struct StateMachineFP
 {
     std::vector<StateFP> states; 
-    void PushState(StateFP state);
-    void PopState();
-    void ChangeState(StateFP state);
+    void PushState(StateFP state, int num, ...);
+    void PopState(int num, ...);
+    void ChangeState(StateFP state, int num, ...);
     void ClearStates();
-    void Update(float dt);
+    void Update(float dt, int num, ...);
 };
 
 #endif

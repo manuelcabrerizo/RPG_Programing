@@ -12,6 +12,7 @@ struct int2
     int b;
 };
 
+
 struct Entity
 {
     int x;
