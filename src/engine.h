@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include <SDL2/SDL.h>
-#include <sol.hpp>
 #include "darray.h"
 #include "map.h"
 #include "entity.h"

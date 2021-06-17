@@ -11,7 +11,42 @@
 
 void MoveStateOnEnter(va_list* valist, int num)
 {
-
+    Entity* entity = NULL;
+    Map* map = NULL;
+    Input* input = NULL;
+    StateMachineFP* sm;
+ 
+    for(int i = 0; i < num; i++)
+    {
+        if(i == 0)
+        {
+            entity = va_arg(*valist, Entity*);
+        }
+        if(i == 1)
+        {
+            map = va_arg(*valist, Map*);
+        }
+        if(i == 2)
+        {
+            input = va_arg(*valist, Input*);
+        }
+        if(i == 3)
+        {
+            sm = va_arg(*valist, StateMachineFP*);
+        }
+    }
+ 
+    int targetX = entity->tileX + entity->xMove;
+    int targetY = entity->tileY + entity->yMove;
+    if(IsBlocked(map, targetX, targetY, 0))
+    {
+        entity->xMove = 0;
+        entity->yMove = 0;
+        sm->ChangeState(entity->waitState, 4, (void*)entity,
+                                              (void*)map,
+                                              (void*)input,
+                                              (void*)sm);  
+    }
 }
 
 void MoveStateOnExit(va_list* valist, int num)

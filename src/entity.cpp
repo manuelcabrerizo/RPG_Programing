@@ -8,7 +8,7 @@ void LoadEntity(Entity* entity, const char* textureFilePath)
 {
     entity->width = 16;
     entity->height = 24;
-    entity->tileX = 6;
+    entity->tileX = 9;
     entity->tileY = 6;
     entity->x = entity->tileX * entity->width;
     entity->y = entity->tileY * entity->width;

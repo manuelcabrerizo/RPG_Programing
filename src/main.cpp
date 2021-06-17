@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
                                              (int)WNDWIDTH,
                                              (int)WNDHEIGHT);
 
-    LoadMap(&engine.map, "./assets/Map.lua", "./assets/rpg_indoor.bmp");
+    LoadMap(&engine.map, "./assets/cMap.lua", "./assets/rpg_indoor.bmp");
     LoadEntity(&engine.hero, "./assets/walk_cycle.bmp");
     SetEntityFrame(&engine.hero, 8);
 
