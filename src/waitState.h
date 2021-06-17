@@ -12,7 +12,6 @@
 void WaitStateOnEnter(va_list* valist, int num)
 {
     Entity* entity = NULL;
- 
     for(int i = 0; i < num; i++)
     {
         if(i == 0)
@@ -20,7 +19,7 @@ void WaitStateOnEnter(va_list* valist, int num)
             entity = va_arg(*valist, Entity*);
         }
     }
-
+    
     entity->numFrames = 1; 
 }
 

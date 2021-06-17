@@ -41,7 +41,18 @@ Map LoadLuaMap(const char* filePath)
             }
             index++;
         }
-  
+        sol::table layers = map_t["layers"];
+        int indexLayer = 0;
+        while(true)
+        {
+            sol::optional<sol::table> exist_layer = layers[indexLayer];
+            if(exist_layer == sol::nullopt)
+            {
+                break;
+            }
+            indexLayer++;
+        }
+        map.numLayers = indexLayer / 3;  
     }
     return map; 
 }
@@ -49,12 +60,23 @@ Map LoadLuaMap(const char* filePath)
 int GetTile(Map* map, int x, int y, int layer)
 {
     sol::table data = map->lua["map"]["layers"][layer]["data"];
-    return (int)data[(x + y * map->width) + 1] - 1;
+    return (int)data[CoordToIndex(map, x, y) + 1] - 1;
+}
+
+Trigger GetTrigger(Map* map, int x, int y, int layer)
+{
+    Trigger trigger = map->triggers[layer][CoordToIndex(map, x, y)];
+    return trigger;
+}
+
+int CoordToIndex(Map* map, int x, int y)
+{
+    return x + y * map->width;
 }
 
 bool IsBlocked(Map* map, int x, int y, int layer)
 {
-    int tile = GetTile(map, x, y, layer + 1) + 1;
+    int tile = GetTile(map, x, y, layer + 2) + 1;
     return tile == map->blockingTile;
 }
 
@@ -80,8 +102,10 @@ void LoadMap(Map* map, const char* luaFilePath, const char* textureFilePath)
                            map->tileHeight);
 }
 
-void DrawMap(uint32_t* buffer, Map* map)
+void DrawMap(uint32_t* buffer, Map* map, int layer)
 {
+    int layerIndex = layer * 3;
+
     PointToTile(map,
                 0, 
                 0, 
@@ -102,7 +126,13 @@ void DrawMap(uint32_t* buffer, Map* map)
                       map->uvs,
                       map->x + x * map->tileWidth,
                       map->y + y * map->tileHeight,
-                      GetTile(map, x, y, 0),
+                      GetTile(map, x, y, layerIndex),
+                      &map->image);
+           DrawFrame(buffer,
+                      map->uvs,
+                      map->x + x * map->tileWidth,
+                      map->y + y * map->tileHeight,
+                      GetTile(map, x, y, layerIndex + 1),
                       &map->image);
         }
     }

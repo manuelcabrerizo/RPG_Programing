@@ -1,8 +1,11 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include <vector>
+#include <map>
 #include "texture.h"
 #include <sol.hpp>
+#include "entity.h"
 
 struct Map
 {
@@ -15,6 +18,8 @@ struct Map
     int tileHeight;
     Texture image;
     float* uvs;
+    int numLayers;
+    std::vector<std::map<int, Trigger>> triggers;
 
     int camX;
     int camY;
@@ -23,7 +28,7 @@ struct Map
     int leftTile;
     int bottomTile;
     int rightTile;
-
+ 
     // collition layer
     int blockingTile;
 };
@@ -31,8 +36,10 @@ struct Map
 Map LoadLuaMap(const char* filePath);
 void PointToTile(Map map, int left, int top, int x, int y, int& tileX, int& tileY);
 void LoadMap(Map* map, const char* luaFilePath, const char* textureFilePath);
-void DrawMap(uint32_t* buffer, Map* map);
+void DrawMap(uint32_t* buffer, Map* map, int layer);
 int GetTile(Map* map, int x, int y, int layer);
+Trigger GetTrigger(Map* map, int x, int y, int layer);
 bool IsBlocked(Map* map, int x, int y, int layer);
+int CoordToIndex(Map* map, int x, int y);
 
 #endif

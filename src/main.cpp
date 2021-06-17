@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h> 
-
 #include "engine.h"
+#include "actions.h"
 
 #define FPS 60
 #define FRAME_TARGET_TIME (1000 / FPS)
@@ -50,19 +50,35 @@ void UpdateAndRender(Engine* engine, float dt)
                       (void*)&engine->map,
                       (void*)&engine->input,
                       (void*)&engine->sm);
-   UpdateEntityAnim(&engine->hero, dt); 
+    UpdateEntityAnim(&engine->hero, dt);
+
+    if(GetKeyJustDown(&engine->input, SDL_SCANCODE_SPACE))
+    {
+        int2 xy = GetFacedTileCoords(&engine->hero);
+        Trigger trigger = GetTrigger(&engine->map, xy.a, xy.b, engine->hero.layer);
+        if(trigger.OnUse != NULL)
+        {
+            trigger.OnUse(&engine->hero, trigger.index);
+        }
+    }
+     
 
     // render stuff
     ClearBuffer(engine->colorBuffer, 0xFF000000);
 
-    DrawMap(engine->colorBuffer, &engine->map);
-
-    DrawFrame(engine->colorBuffer,
-              engine->hero.uvs,
-              engine->hero.x,
-              engine->hero.y,
-              engine->hero.frame,
-              &engine->hero.image);
+    for(int i = 0; i < engine->map.numLayers; i++)
+    {
+        DrawMap(engine->colorBuffer, &engine->map, i);
+        if(engine->hero.layer == i)
+        {
+            DrawFrame(engine->colorBuffer,
+                      engine->hero.uvs,
+                      engine->hero.x,
+                      engine->hero.y,
+                      engine->hero.frame,
+                      &engine->hero.image);
+        }
+    }
 
     RenderColorBuffer(engine);
 }
@@ -103,19 +119,26 @@ int main(int argc, char* argv[])
                                              (int)WNDWIDTH,
                                              (int)WNDHEIGHT);
 
-    LoadMap(&engine.map, "./assets/cMap.lua", "./assets/rpg_indoor.bmp");
+    LoadMap(&engine.map, "./assets/cMap2.lua", "./assets/rpg_indoor.bmp");
     LoadEntity(&engine.hero, "./assets/walk_cycle.bmp");
     SetEntityFrame(&engine.hero, 8);
+   
+    ReturnFunc TP0 = TeleportAction(&engine.map, 9, 6);
+    ReturnFunc TP1 = TeleportAction(&engine.map, 9, 1);
+    ReturnFunc TP2 = TeleportAction(&engine.map, 9, 10);
+    
+    Trigger trigger1 = {};
+    Trigger trigger2 = {};
+    trigger1.OnUse = TP1;
+    trigger1.index = 1;
+    trigger2.OnUse = TP2;
+    trigger2.index = 2;
 
-    engine.map.x = -(int)engine.hero.x;
-    engine.map.y = -(int)engine.hero.y - engine.map.tileHeight / 2;
-    engine.map.x += WNDWIDTH  / 2;
-    engine.map.y += WNDHEIGHT / 2;
+    std::map<int, Trigger> mapTriggers {{CoordToIndex(&engine.map, 9, 11), trigger1},
+                                        {CoordToIndex(&engine.map, 9, 0), trigger2}};
+    engine.map.triggers.push_back(mapTriggers);
 
-    Teleport(&engine.hero,
-             &engine.map,
-             engine.hero.tileX,
-             engine.hero.tileY); 
+    TP0(&engine.hero, 0);
  
     engine.sm.PushState(engine.hero.waitState, 1,
                        (void*)&engine.hero); 
@@ -138,6 +161,7 @@ int main(int argc, char* argv[])
         previusFrameTime = currentFrameTime;
     }
     
+    FreeGlobals(); 
     ArrayFree(engine.map.uvs);
     free(engine.colorBuffer);
     SDL_DestroyRenderer(engine.renderer);

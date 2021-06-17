@@ -35,9 +35,35 @@ void MoveStateOnEnter(va_list* valist, int num)
             sm = va_arg(*valist, StateMachineFP*);
         }
     }
- 
+
+    if(entity->xMove == -1)
+    {
+        entity->numFrames = 4;
+        entity->actualAnim = entity->leftAnim;
+        entity->facing = 'l';
+    }
+    else if(entity->xMove == 1)
+    {
+        entity->numFrames = 4;
+        entity->actualAnim = entity->rightAnim;
+        entity->facing = 'r';
+    }
+    else if(entity->yMove == -1)
+    {
+        entity->numFrames = 4;
+        entity->actualAnim = entity->upAnim;
+        entity->facing = 'u';
+    }
+    else if(entity->yMove == 1)
+    {
+        entity->numFrames = 4;
+        entity->actualAnim = entity->downAnim;
+        entity->facing = 'd';
+    }
+
     int targetX = entity->tileX + entity->xMove;
     int targetY = entity->tileY + entity->yMove;
+    
     if(IsBlocked(map, targetX, targetY, 0))
     {
         entity->xMove = 0;
@@ -47,6 +73,7 @@ void MoveStateOnEnter(va_list* valist, int num)
                                               (void*)input,
                                               (void*)sm);  
     }
+    
 }
 
 void MoveStateOnExit(va_list* valist, int num)
@@ -65,10 +92,25 @@ void MoveStateOnExit(va_list* valist, int num)
             map = va_arg(*valist, Map*);
         }
     }
-    
+        
+    if(entity->xMove != 0 || entity->yMove != 0)
+    {
+        Trigger trigger = GetTrigger(map, entity->tileX, entity->tileY, entity->layer);
+        if(trigger.OnExit != NULL)
+        {
+            trigger.OnExit(entity, trigger.index);
+        }
+    }
+
     entity->tileX += entity->xMove;
     entity->tileY += entity->yMove;
     Teleport(entity, map, entity->tileX, entity->tileY);
+    Trigger trigger = GetTrigger(map, entity->tileX, entity->tileY, entity->layer);
+    if(trigger.OnEnter != NULL)
+    {
+        trigger.OnEnter(entity, trigger.index);
+    }
+
 }
 
 void MoveStateUpdate(va_list* valist, int num, float dt)
@@ -97,27 +139,6 @@ void MoveStateUpdate(va_list* valist, int num, float dt)
         {
             sm = va_arg(*valist, StateMachineFP*);
         }
-    }
-
-    if(entity->xMove == -1)
-    {
-        entity->numFrames = 4;
-        entity->actualAnim = entity->leftAnim;
-    }
-    else if(entity->xMove == 1)
-    {
-        entity->numFrames = 4;
-        entity->actualAnim = entity->rightAnim;
-    }
-    else if(entity->yMove == -1)
-    {
-        entity->numFrames = 4;
-        entity->actualAnim = entity->upAnim;
-    }
-    else if(entity->yMove == 1)
-    {
-        entity->numFrames = 4;
-        entity->actualAnim = entity->downAnim;
     }
 
     static float time = 0.0f;
