@@ -43,25 +43,30 @@ void HandleEvents(Engine* engine)
 
 void UpdateAndRender(Engine* engine, float dt)
 {
-    // update stuff 
-    
-    engine->sm.Update(dt, 4,
-                      (void*)&engine->hero,
-                      (void*)&engine->map,
-                      (void*)&engine->input,
-                      (void*)&engine->sm);
-    UpdateEntityAnim(&engine->hero, dt);
-
-    if(GetKeyJustDown(&engine->input, SDL_SCANCODE_SPACE))
-    {
-        int2 xy = GetFacedTileCoords(&engine->hero);
-        Trigger trigger = GetTrigger(&engine->map, xy.a, xy.b, engine->hero.layer);
-        if(trigger.OnUse != NULL)
+    // update stuff        
+    for(int i = 0; i < engine->entities.size(); i++)
+    {    
+        engine->entities[i].sm.Update(dt, 4,
+                         (void*)&engine->entities[i],
+                         (void*)&engine->map,
+                         (void*)&engine->input,
+                         (void*)&engine->entities[i].sm); 
+        if(engine->entities[i].type == 'h')
         {
-            trigger.OnUse(&engine->hero, trigger.index);
+            //printf("before: %d\n", engine->entities[0].frame);
+            UpdateEntityAnim(&engine->entities[i], dt);
+            //printf("after: %d\n", engine->entities[0].frame);
+            if(GetKeyJustDown(&engine->input, SDL_SCANCODE_SPACE))
+            {
+                int2 xy = GetFacedTileCoords(&engine->entities[i]);
+                Trigger trigger = GetTrigger(&engine->map, xy.a, xy.b, engine->entities[i].layer);
+                if(trigger.OnUse != NULL)
+                {
+                    trigger.OnUse(&engine->entities[i], trigger.index);
+                }
+            }
         }
     }
-     
 
     // render stuff
     ClearBuffer(engine->colorBuffer, 0xFF000000);
@@ -69,17 +74,20 @@ void UpdateAndRender(Engine* engine, float dt)
     for(int i = 0; i < engine->map.numLayers; i++)
     {
         DrawMap(engine->colorBuffer, &engine->map, i);
-        if(engine->hero.layer == i)
+        for(int j = 0; j < engine->entities.size(); j++)
         {
-            DrawFrame(engine->colorBuffer,
-                      engine->hero.uvs,
-                      engine->hero.x,
-                      engine->hero.y,
-                      engine->hero.frame,
-                      &engine->hero.image);
+            if(engine->entities[j].layer == i)
+            {
+                DrawFrame(engine->colorBuffer,
+                          engine->entities[j].uvs,
+                          engine->entities[j].x,
+                          engine->entities[j].y,
+                          engine->entities[j].frame,
+                          &engine->entities[j].image);
+                
+            }
         }
     }
-
     RenderColorBuffer(engine);
 }
 
@@ -96,7 +104,7 @@ int main(int argc, char* argv[])
                                      SDL_WINDOWPOS_CENTERED, 
                                      SDL_WINDOWPOS_CENTERED, 
                                      WNDWIDTH, WNDHEIGHT, 
-                                     SDL_WINDOW_SHOWN /*| SDL_WINDOW_FULLSCREEN*/);
+                                     SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN);
     if(engine.window != 0)
     {
         engine.renderer = SDL_CreateRenderer(engine.window, -1, 0);
@@ -120,9 +128,23 @@ int main(int argc, char* argv[])
                                              (int)WNDHEIGHT);
 
     LoadMap(&engine.map, "./assets/cMap2.lua", "./assets/rpg_indoor.bmp");
-    LoadEntity(&engine.hero, "./assets/walk_cycle.bmp");
-    SetEntityFrame(&engine.hero, 8);
-   
+
+
+
+    engine.entities = LoadEntitiesFromLuaFile("./assets/EntityDef.lua");
+
+    for(int i = 0; i < engine.entities.size(); i++)
+    {
+
+        engine.entities[i].actualAnim = engine.entities[i].downAnim;
+
+        for(int j = 0; j < 4; j++)
+        {
+            printf("%d ", engine.entities[i].actualAnim[j]);
+        }
+        printf("\n");
+    }
+    
     ReturnFunc TP0 = TeleportAction(&engine.map, 9, 6);
     ReturnFunc TP1 = TeleportAction(&engine.map, 9, 1);
     ReturnFunc TP2 = TeleportAction(&engine.map, 9, 10);
@@ -136,13 +158,23 @@ int main(int argc, char* argv[])
 
     std::map<int, Trigger> mapTriggers {{CoordToIndex(&engine.map, 9, 11), trigger1},
                                         {CoordToIndex(&engine.map, 9, 0), trigger2}};
-    engine.map.triggers.push_back(mapTriggers);
+    engine.map.triggers.push_back(mapTriggers); 
 
-    TP0(&engine.hero, 0);
- 
-    engine.sm.PushState(engine.hero.waitState, 1,
-                       (void*)&engine.hero); 
+    for(int i = 0; i < engine.entities.size(); i++)
+    {   
+        Teleport(&engine.entities[i], &engine.map, engine.entities[i].tileX, engine.entities[i].tileY); 
+        if(engine.entities[i].type == 'h')
+        {
+            engine.entities[i].sm.PushState(&engine.entities[i].waitState, 1,
+                                            (void*)&engine.entities[i]); 
+        } 
+        else if(engine.entities[i].type == 'n')
+        {
 
+            engine.entities[i].sm.PushState(&engine.entities[i].npcStandState, 0);
+        }  
+    } 
+    
     engine.isRunning = true;
 
     uint32_t previusFrameTime = 0;
@@ -161,6 +193,7 @@ int main(int argc, char* argv[])
         previusFrameTime = currentFrameTime;
     }
     
+    ClearMapTriggers(&engine.map); 
     FreeGlobals(); 
     ArrayFree(engine.map.uvs);
     free(engine.colorBuffer);
@@ -170,3 +203,4 @@ int main(int argc, char* argv[])
 
     return 0;
 }
+

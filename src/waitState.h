@@ -19,7 +19,6 @@ void WaitStateOnEnter(va_list* valist, int num)
             entity = va_arg(*valist, Entity*);
         }
     }
-    
     entity->numFrames = 1; 
 }
 
@@ -53,12 +52,12 @@ void WaitStateUpdate(va_list* valist, int num, float dt)
             sm = va_arg(*valist, StateMachineFP*);
         }
     }
-    
+
     if(GetKeyDown(input, SDL_SCANCODE_A))
     {
         entity->xMove = -1;
         entity->yMove = 0;
-        sm->ChangeState(entity->moveState, 4, (void*)entity,
+        sm->ChangeState(&entity->moveState, 4, (void*)entity,
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm); 
@@ -67,7 +66,7 @@ void WaitStateUpdate(va_list* valist, int num, float dt)
     {
         entity->xMove = 1;
         entity->yMove = 0;
-        sm->ChangeState(entity->moveState, 4, (void*)entity,
+        sm->ChangeState(&entity->moveState, 4, (void*)entity,
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm); 
@@ -76,7 +75,7 @@ void WaitStateUpdate(va_list* valist, int num, float dt)
     {
         entity->xMove = 0;
         entity->yMove = -1;
-        sm->ChangeState(entity->moveState, 4, (void*)entity,
+        sm->ChangeState(&entity->moveState, 4, (void*)entity,
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm);    
@@ -85,13 +84,11 @@ void WaitStateUpdate(va_list* valist, int num, float dt)
     {
         entity->xMove = 0;
         entity->yMove = 1;
-        sm->ChangeState(entity->moveState, 4, (void*)entity,
+        sm->ChangeState(&entity->moveState, 4, (void*)entity,
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm);    
     }
-    
-    
 }
 
 #endif

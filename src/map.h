@@ -41,5 +41,6 @@ int GetTile(Map* map, int x, int y, int layer);
 Trigger GetTrigger(Map* map, int x, int y, int layer);
 bool IsBlocked(Map* map, int x, int y, int layer);
 int CoordToIndex(Map* map, int x, int y);
+void ClearMapTriggers(Map* map);
 
 #endif

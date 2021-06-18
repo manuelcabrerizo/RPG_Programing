@@ -6,6 +6,7 @@
 #include "map.h"
 #include "entity.h"
 #include "input.h"
+#include <vector>
 
 #define WNDWIDTH 640
 #define WNDHEIGHT 480
@@ -23,13 +24,13 @@ struct Engine
     Input input;
     
     Map map;
-    Entity hero;
-
-    StateMachineFP sm;
+    std::vector<Entity> entities;
+    //Entity hero; 
 };
 
 int IntMax(int a, int b);
 int IntMin(int a, int b);
+
 
 void RenderColorBuffer(Engine* engine);
 void ClearBuffer(uint32_t* buffer, uint32_t color);

@@ -35,7 +35,7 @@ void MoveStateOnEnter(va_list* valist, int num)
             sm = va_arg(*valist, StateMachineFP*);
         }
     }
-
+    
     if(entity->xMove == -1)
     {
         entity->numFrames = 4;
@@ -68,7 +68,7 @@ void MoveStateOnEnter(va_list* valist, int num)
     {
         entity->xMove = 0;
         entity->yMove = 0;
-        sm->ChangeState(entity->waitState, 4, (void*)entity,
+        sm->ChangeState(&entity->waitState, 4, (void*)entity,
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm);  
@@ -157,7 +157,7 @@ void MoveStateUpdate(va_list* valist, int num, float dt)
     if(time >= 1.0f)
     {
         time = 0.0f;
-        sm->ChangeState(entity->waitState, 4, (void*)entity,
+        sm->ChangeState(&entity->waitState, 4, (void*)entity,
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm); 

@@ -139,65 +139,11 @@ void DrawMap(uint32_t* buffer, Map* map, int layer)
 }
 
 
-
-/*
-Map LoadLuaMap(const char* filePath)
+void ClearMapTriggers(Map* map)
 {
-    Map map = {}; 
-    sol::state lua;
-    lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::math);
-    lua.script_file(filePath);
-
-    sol::table map_t = lua["map"];
-    sol::optional<sol::table> exist_map = lua["map"];
-    if(exist_map == sol::nullopt)
+    for(int i = 0; i < map->triggers.size(); i++)
     {
-        printf("ERROR::LUA::FILE::NOT::FOUND\n");
+        map->triggers[i].clear();
     }
-    else
-    { 
-        map.width = (int)map_t["width"];
-        map.height = (int)map_t["height"];
-        map.tileWidth = (int)map_t["tilewidth"];
-        map.tileHeight = (int)map_t["tileheight"];
-
-        sol::table layer = map_t["layers"];
-        map.layers = map_t["layers"];
-        sol::optional<sol::table> exist_layer = map_t["layers"];
-        if(exist_layer == sol::nullopt)
-        {
-            printf("ERROR::LAYERS::NOT::FOUND\n");
-        }
-        else
-        {
-            int layerIndex = 0;
-            while(true)
-            {
-                sol::optional<sol::table> exist_index_layer = layer[layerIndex];
-                if(exist_index_layer == sol::nullopt)
-                {
-                    break;
-                }
-                else
-                {
-                    std::string layerName = layer[layerIndex]["name"];
-                    if(strcmp(layerName.c_str(), "base") == 0)
-                    {
-                        sol::table data = layer[layerIndex]["data"]; 
-                        for(int i = 0; i < (map.width * map.height); i++)
-                        {
-                            ArrayPush(map.data, (int)data[i + 1] - 1, int); 
-                        }
-                    }
-                    else if(strcmp(layerName.c_str(), "collition") == 0)
-                    {
-                    
-                    }
-                }
-                layerIndex++;
-            } 
-        }        
-    }
-    return map; 
-}
-*/
+    map->triggers.clear();
+}   

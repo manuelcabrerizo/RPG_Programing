@@ -14,6 +14,7 @@ struct int2
 
 struct Entity
 {
+    int type;
     int x;
     int y;
     int tileX;
@@ -28,6 +29,7 @@ struct Entity
     
     StateFP waitState;
     StateFP moveState;
+    StateFP npcStandState;
 
     int xMove;
     int yMove;
@@ -38,6 +40,8 @@ struct Entity
     int downAnim[4];
     int leftAnim[4];
     int rightAnim[4];
+
+    StateMachineFP sm;
 };
 
 
@@ -59,5 +63,6 @@ void LoadEntity(Entity* entity, const char* textureFilePath);
 int2 GetTileFoot(Map* map, int x, int y);
 int2 GetFacedTileCoords(Entity* entity);
 void Teleport(Entity* entity, Map* map, int tileX, int tileY);
+std::vector<Entity> LoadEntitiesFromLuaFile(const char* filePath);
 
 #endif
