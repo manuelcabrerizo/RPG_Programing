@@ -144,9 +144,9 @@ int main(int argc, char* argv[])
                                              (int)WNDHEIGHT);
 
     LoadMap(&engine.map, "./assets/cMap2.lua", "./assets/rpg_indoor.bmp");
-
-
     engine.entities = LoadEntitiesFromLuaFile("./assets/EntityDef.lua");
+
+    LoadEntitiesPositionsOnMap(&engine.map, engine.entities);
 
     for(int i = 0; i < engine.entities.size(); i++)
     {

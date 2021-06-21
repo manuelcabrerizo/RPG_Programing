@@ -30,6 +30,20 @@ void PlanStrollOnEnter(va_list* valist, int num)
 
 void PlanStrollOnExit(va_list* valist, int num)
 {
+    Entity* entity = NULL;
+    Map* map = NULL;
+
+    for(int i = 0; i < num; i++)
+    {
+        if(i == 0)
+        {
+            entity = va_arg(*valist, Entity*);
+        }
+        if(i == 1)
+        {
+            map = va_arg(*valist, Map*);
+        }
+    }  
 }
 
 void PlanStrollUpdate(va_list* valist, int num, float dt)

@@ -24,6 +24,20 @@ void WaitStateOnEnter(va_list* valist, int num)
 
 void WaitStateOnExit(va_list* valist, int num)
 {
+    Entity* entity = NULL;
+    Map* map = NULL;
+
+    for(int i = 0; i < num; i++)
+    {
+        if(i == 0)
+        {
+            entity = va_arg(*valist, Entity*);
+        }
+        if(i == 1)
+        {
+            map = va_arg(*valist, Map*);
+        }
+    } 
 }
 
 void WaitStateUpdate(va_list* valist, int num, float dt)

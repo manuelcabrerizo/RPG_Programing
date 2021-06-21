@@ -72,7 +72,12 @@ void MoveStateOnEnter(va_list* valist, int num)
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm);  
-    }    
+    }
+    else
+    {
+        UnSetOccupiedTile(map, entity->tileX, entity->tileY);
+        SetOccupiedTile(map, targetX, targetY);
+    }
 }
 
 void MoveStateOnExit(va_list* valist, int num)

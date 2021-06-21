@@ -20,6 +20,7 @@ struct Map
     float* uvs;
     int numLayers;
     std::vector<std::map<int, Trigger>> triggers;
+    int* entityPositions;
 
     int camX;
     int camY;
@@ -34,6 +35,9 @@ struct Map
 };
 
 Map LoadLuaMap(const char* filePath);
+void LoadEntitiesPositionsOnMap(Map* map, std::vector<Entity> entities);
+void SetOccupiedTile(Map* map, int x, int y);
+void UnSetOccupiedTile(Map* map, int x, int y);
 void PointToTile(Map map, int left, int top, int x, int y, int& tileX, int& tileY);
 void LoadMap(Map* map, const char* luaFilePath, const char* textureFilePath);
 void DrawMap(uint32_t* buffer, Map* map, int layer);

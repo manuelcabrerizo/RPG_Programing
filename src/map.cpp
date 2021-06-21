@@ -57,6 +57,37 @@ Map LoadLuaMap(const char* filePath)
     return map; 
 }
 
+void LoadEntitiesPositionsOnMap(Map* map, std::vector<Entity> entities)
+{
+    for(int y = 0; y < map->height; y++)
+    {
+        for(int x = 0; x < map->width; x++)
+        {
+            ArrayPush(map->entityPositions, 0, int);
+        }
+    }
+
+    for(int i = 0; i < entities.size(); i++)
+    {
+        map->entityPositions[CoordToIndex(map, entities[i].tileX, entities[i].tileY)] = map->blockingTile;
+    }
+}
+
+void SetOccupiedTile(Map* map, int x, int y)
+{
+    map->entityPositions[CoordToIndex(map, x, y)] = map->blockingTile;
+}
+
+void UnSetOccupiedTile(Map* map, int x, int y)
+{
+    map->entityPositions[CoordToIndex(map, x, y)] = 0;
+}
+
+int GetTileEntity(Map* map, int x, int y)
+{
+    return map->entityPositions[CoordToIndex(map, x, y)];
+}
+
 int GetTile(Map* map, int x, int y, int layer)
 {
     sol::table data = map->lua["map"]["layers"][layer]["data"];
@@ -77,7 +108,8 @@ int CoordToIndex(Map* map, int x, int y)
 bool IsBlocked(Map* map, int x, int y, int layer)
 {
     int tile = GetTile(map, x, y, layer + 2) + 1;
-    return tile == map->blockingTile;
+    int tileEntity = GetTileEntity(map, x, y);
+    return tile == map->blockingTile || tileEntity == map->blockingTile;
 }
 
 void PointToTile(Map* map, int x, int y, int& tileX, int& tileY)
