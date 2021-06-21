@@ -41,9 +41,27 @@ void HandleEvents(Engine* engine)
     }
 }
 
+std::vector<Entity> OrderEntitiesByYpos(std::vector<Entity> entities)
+{
+    for(int i = 0; i < entities.size(); i++)
+    {
+        for(int j = i; j < entities.size(); j++)
+        {
+            if(entities[i].y > entities[j].y)
+            {
+                Entity temp = entities[i];
+                entities[i] = entities[j];
+                entities[j] = temp; 
+            }
+        }
+    }
+    return entities;
+}
+
 void UpdateAndRender(Engine* engine, float dt)
 {
-    // update stuff        
+    // update stuff     
+    engine->entities = OrderEntitiesByYpos(engine->entities);   
     for(int i = 0; i < engine->entities.size(); i++)
     {    
         engine->entities[i].sm.Update(dt, 4,
@@ -92,6 +110,7 @@ void UpdateAndRender(Engine* engine, float dt)
 int main(int argc, char* argv[])
 {
     Engine engine = {};
+    srand(time(NULL));
     printf("Initializing SDL\n");
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
@@ -117,7 +136,7 @@ int main(int argc, char* argv[])
         printf("ERROR :: Creating the WINDOW\n");
         return 1;
     }
-
+    
     engine.colorBuffer = (uint32_t*)malloc(((int)WNDWIDTH * (int)WNDHEIGHT) * sizeof(uint32_t));
     engine.textureBuffer = SDL_CreateTexture(engine.renderer,
                                              SDL_PIXELFORMAT_RGBA32, 

@@ -23,7 +23,6 @@ void PlanStrollOnEnter(va_list* valist, int num)
             entity = va_arg(*valist, Entity*);
         }
     }
-    srand(time(NULL));
     int tempRand = rand() % 4;
     entity->countDown = (float)tempRand;
     entity->numFrames = 1;
