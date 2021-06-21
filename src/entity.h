@@ -3,6 +3,7 @@
 
 #include "texture.h"
 //#include "map.h"
+#include <string>
 
 #include "stateMachine.h"
 
@@ -26,10 +27,19 @@ struct Entity
     Texture image;
     float* uvs;
     int layer;
+
+    // entity movement
+    float animTime;
+    float time;
+    float frameCount;
+    float countDown;
     
+    std::string defStateName;
+    StateFP* defaultState; 
     StateFP waitState;
     StateFP moveState;
     StateFP npcStandState;
+    StateFP planStrollState;
 
     int xMove;
     int yMove;

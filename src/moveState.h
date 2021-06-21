@@ -15,7 +15,7 @@ void MoveStateOnEnter(va_list* valist, int num)
     Map* map = NULL;
     Input* input = NULL;
     StateMachineFP* sm;
- 
+
     for(int i = 0; i < num; i++)
     {
         if(i == 0)
@@ -35,7 +35,7 @@ void MoveStateOnEnter(va_list* valist, int num)
             sm = va_arg(*valist, StateMachineFP*);
         }
     }
-    
+
     if(entity->xMove == -1)
     {
         entity->numFrames = 4;
@@ -68,12 +68,11 @@ void MoveStateOnEnter(va_list* valist, int num)
     {
         entity->xMove = 0;
         entity->yMove = 0;
-        sm->ChangeState(&entity->waitState, 4, (void*)entity,
+        sm->ChangeState(*entity->defaultState, 4, (void*)entity,
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm);  
-    }
-    
+    }    
 }
 
 void MoveStateOnExit(va_list* valist, int num)
@@ -141,28 +140,37 @@ void MoveStateUpdate(va_list* valist, int num, float dt)
         }
     }
 
-    static float time = 0.0f;
+    //entity->time = 0.0f;
     float xA = (float)(entity->tileX * map->tileWidth);
     float yA = (float)(entity->tileY * map->tileHeight);
     float xB = (float)((entity->tileX + entity->xMove) * map->tileWidth);
     float yB = (float)((entity->tileY + entity->yMove) * map->tileHeight);
     float xC = xB - xA;
     float yC = yB - yA;
-    float rX = xA + (xC * time);
-    float rY = yA + (yC * time); 
-    map->x = -(int)rX;
-    map->y = -(int)rY - map->tileHeight / 2;
-    map->x += WNDWIDTH / 2;
-    map->y += WNDHEIGHT / 2;
-    if(time >= 1.0f)
+    float rX = xA + (xC * entity->time);
+    float rY = yA + (yC * entity->time);
+    if(entity->type == 'h')
     {
-        time = 0.0f;
-        sm->ChangeState(&entity->waitState, 4, (void*)entity,
+        map->x = -(int)rX;
+        map->y = -(int)rY - map->tileHeight / 2;
+        map->x += WNDWIDTH / 2;
+        map->y += WNDHEIGHT / 2;
+    }
+    else if(entity->type == 'n')
+    {
+        entity->x = (int)rX + map->x;
+        entity->y = ((int)rY - map->tileHeight / 2) + map->y;
+    }
+
+    if(entity->time >= 1.0f)
+    {
+        entity->time = 0.0f;
+        sm->ChangeState(*entity->defaultState, 4, (void*)entity,
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm); 
     }
-    time += dt * 2.0f;
+    entity->time += dt * 2.0f;
 }
 
 #endif

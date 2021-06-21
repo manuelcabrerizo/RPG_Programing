@@ -3,8 +3,8 @@
 #include "waitState.h"
 #include "moveState.h"
 #include "npcStandState.h"
+#include "planStrollState.h"
 
-#include <string.h>
 #include <stdlib.h> 
 
 void LoadEntity(Entity* entity, const char* textureFilePath)
@@ -98,7 +98,13 @@ std::vector<Entity> LoadEntitiesFromLuaFile(const char* filePath)
                 {
                     InitState(&entity.npcStandState, StandStateOnEnter, StandStateOnExit, StandStateUpdate);
                 }
+                else if(strcmp(stateName.c_str(), "plan_stroll") == 0)
+                {
+                    InitState(&entity.planStrollState, PlanStrollOnEnter, PlanStrollOnExit, PlanStrollUpdate);
+                }
             }
+
+            entity.defStateName = entityTable["state"];
  
             if(entity.facing == 'd')
             {
@@ -126,16 +132,15 @@ std::vector<Entity> LoadEntitiesFromLuaFile(const char* filePath)
 
 void UpdateEntityAnim(Entity* entity, float dt)
 {
-    static float time = 0.0f;
     if(entity->numFrames > 1)
     {
-        time += dt * 10.0f;
-        if(time >= entity->numFrames)
+        entity->animTime += dt * 10.0f;
+        if(entity->animTime >= entity->numFrames)
         {
-            time = 0.0f;
+            entity->animTime = 0.0f;
         }
     }
-    SetEntityFrame(entity, entity->actualAnim[(int)time]);
+    SetEntityFrame(entity, entity->actualAnim[(int)entity->animTime]);
 }
 
 void SetEntityFrame(Entity* entity, int frame)

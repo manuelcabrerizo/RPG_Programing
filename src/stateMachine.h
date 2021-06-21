@@ -23,10 +23,10 @@ void InitState(StateFP* state,
 
 struct StateMachineFP
 {
-    std::vector<StateFP*> states; 
-    void PushState(StateFP* state, int num, ...);
+    std::vector<StateFP> states; 
+    void PushState(StateFP state, int num, ...);
     void PopState(int num, ...);
-    void ChangeState(StateFP* state, int num, ...);
+    void ChangeState(StateFP state, int num, ...);
     void ClearStates();
     void Update(float dt, int num, ...);
 };

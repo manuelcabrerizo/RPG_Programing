@@ -57,7 +57,7 @@ void WaitStateUpdate(va_list* valist, int num, float dt)
     {
         entity->xMove = -1;
         entity->yMove = 0;
-        sm->ChangeState(&entity->moveState, 4, (void*)entity,
+        sm->ChangeState(entity->moveState, 4, (void*)entity,
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm); 
@@ -66,7 +66,7 @@ void WaitStateUpdate(va_list* valist, int num, float dt)
     {
         entity->xMove = 1;
         entity->yMove = 0;
-        sm->ChangeState(&entity->moveState, 4, (void*)entity,
+        sm->ChangeState(entity->moveState, 4, (void*)entity,
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm); 
@@ -75,7 +75,7 @@ void WaitStateUpdate(va_list* valist, int num, float dt)
     {
         entity->xMove = 0;
         entity->yMove = -1;
-        sm->ChangeState(&entity->moveState, 4, (void*)entity,
+        sm->ChangeState(entity->moveState, 4, (void*)entity,
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm);    
@@ -84,7 +84,7 @@ void WaitStateUpdate(va_list* valist, int num, float dt)
     {
         entity->xMove = 0;
         entity->yMove = 1;
-        sm->ChangeState(&entity->moveState, 4, (void*)entity,
+        sm->ChangeState(entity->moveState, 4, (void*)entity,
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm);    

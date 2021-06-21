@@ -50,12 +50,10 @@ void UpdateAndRender(Engine* engine, float dt)
                          (void*)&engine->entities[i],
                          (void*)&engine->map,
                          (void*)&engine->input,
-                         (void*)&engine->entities[i].sm); 
+                         (void*)&engine->entities[i].sm);
+        UpdateEntityAnim(&engine->entities[i], dt);
         if(engine->entities[i].type == 'h')
-        {
-            //printf("before: %d\n", engine->entities[0].frame);
-            UpdateEntityAnim(&engine->entities[i], dt);
-            //printf("after: %d\n", engine->entities[0].frame);
+        { 
             if(GetKeyJustDown(&engine->input, SDL_SCANCODE_SPACE))
             {
                 int2 xy = GetFacedTileCoords(&engine->entities[i]);
@@ -104,7 +102,7 @@ int main(int argc, char* argv[])
                                      SDL_WINDOWPOS_CENTERED, 
                                      SDL_WINDOWPOS_CENTERED, 
                                      WNDWIDTH, WNDHEIGHT, 
-                                     SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN);
+                                     SDL_WINDOW_SHOWN /*| SDL_WINDOW_FULLSCREEN*/);
     if(engine.window != 0)
     {
         engine.renderer = SDL_CreateRenderer(engine.window, -1, 0);
@@ -135,14 +133,7 @@ int main(int argc, char* argv[])
 
     for(int i = 0; i < engine.entities.size(); i++)
     {
-
         engine.entities[i].actualAnim = engine.entities[i].downAnim;
-
-        for(int j = 0; j < 4; j++)
-        {
-            printf("%d ", engine.entities[i].actualAnim[j]);
-        }
-        printf("\n");
     }
     
     ReturnFunc TP0 = TeleportAction(&engine.map, 9, 6);
@@ -165,13 +156,24 @@ int main(int argc, char* argv[])
         Teleport(&engine.entities[i], &engine.map, engine.entities[i].tileX, engine.entities[i].tileY); 
         if(engine.entities[i].type == 'h')
         {
-            engine.entities[i].sm.PushState(&engine.entities[i].waitState, 1,
+            engine.entities[i].defaultState = &engine.entities[i].waitState;
+            engine.entities[i].sm.PushState(engine.entities[i].waitState, 1,
                                             (void*)&engine.entities[i]); 
         } 
         else if(engine.entities[i].type == 'n')
         {
-
-            engine.entities[i].sm.PushState(&engine.entities[i].npcStandState, 0);
+            if(strcmp(engine.entities[i].defStateName.c_str(), "npc_stand") == 0)
+            {
+                engine.entities[i].defaultState = &engine.entities[i].npcStandState; 
+                engine.entities[i].sm.PushState(engine.entities[i].npcStandState, 1,
+                                                (void*)&engine.entities[i]);
+            }
+            else if(strcmp(engine.entities[i].defStateName.c_str(), "plan_stroll") == 0)
+            {
+                engine.entities[i].defaultState = &engine.entities[i].planStrollState; 
+                engine.entities[i].sm.PushState(engine.entities[i].planStrollState, 1,
+                                                (void*)&engine.entities[i]);
+            } 
         }  
     } 
     

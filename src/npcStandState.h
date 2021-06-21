@@ -11,7 +11,16 @@
 
 void StandStateOnEnter(va_list* valist, int num)
 {
-           
+    Entity* entity = NULL;
+
+    for(int i = 0; i < num; i++)
+    {
+        if(i == 0)
+        {
+            entity = va_arg(*valist, Entity*);
+        }
+    } 
+    entity->numFrames = 1;
 }
 
 void StandStateOnExit(va_list* valist, int num)
@@ -44,8 +53,8 @@ void StandStateUpdate(va_list* valist, int num, float dt)
             sm = va_arg(*valist, StateMachineFP*);
         }
     }
-
-    Teleport(entity, map, entity->tileX, entity->tileY); 
+    Teleport(entity, map, entity->tileX, entity->tileY);
+     
    
 }
 

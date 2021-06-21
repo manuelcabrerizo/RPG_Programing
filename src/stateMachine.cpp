@@ -11,12 +11,12 @@ void InitState(StateFP* state,
     state->Update = Update;
 }
 
-void StateMachineFP::PushState(StateFP* state, int num, ...)
+void StateMachineFP::PushState(StateFP state, int num, ...)
 {   
     va_list valist;
     va_start(valist, num);     
     this->states.push_back(state);
-    this->states.back()->OnEnter(&valist, num);
+    this->states.back().OnEnter(&valist, num);
     va_end(valist);
 }
 
@@ -24,22 +24,22 @@ void StateMachineFP::PopState(int num, ...)
 {
     va_list valist;
     va_start(valist, num);
-    this->states.back()->OnExit(&valist, num);
+    this->states.back().OnExit(&valist, num);
     this->states.pop_back();
     va_end(valist);
 
 }
 
-void StateMachineFP::ChangeState(StateFP* state, int num, ...)
+void StateMachineFP::ChangeState(StateFP state, int num, ...)
 {
     va_list valist;
     va_start(valist, num);
-    this->states.back()->OnExit(&valist, num);
+    this->states.back().OnExit(&valist, num);
     this->states.clear();
     va_end(valist);
     va_start(valist, num);
     this->states.push_back(state);
-    this->states.back()->OnEnter(&valist, num);
+    this->states.back().OnEnter(&valist, num);
     va_end(valist);
 }
 
@@ -52,7 +52,7 @@ void StateMachineFP::Update(float dt, int num, ...)
 {
     va_list valist;
     va_start(valist, num);
-    this->states.back()->Update(&valist, num, dt);
+    this->states.back().Update(&valist, num, dt);
     va_end(valist);
 }
 
