@@ -74,5 +74,4 @@ int2 GetTileFoot(Map* map, int x, int y);
 int2 GetFacedTileCoords(Entity* entity);
 void Teleport(Entity* entity, Map* map, int tileX, int tileY);
 std::vector<Entity> LoadEntitiesFromLuaFile(const char* filePath);
-
 #endif
