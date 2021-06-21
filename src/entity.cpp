@@ -103,8 +103,9 @@ std::vector<Entity> LoadEntitiesFromLuaFile(const char* filePath)
                     InitState(&entity.planStrollState, PlanStrollOnEnter, PlanStrollOnExit, PlanStrollUpdate);
                 }
             }
-
-            entity.defStateName = entityTable["state"];
+            
+            std::string temp = entityTable["state"];
+            entity.defStateName = temp;
  
             if(entity.facing == 'd')
             {
