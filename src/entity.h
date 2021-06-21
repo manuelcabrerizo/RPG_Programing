@@ -35,7 +35,7 @@ struct Entity
     float countDown;
     
     std::string defStateName;
-    StateFP* defaultState; 
+    StateFP defaultState; 
     StateFP waitState;
     StateFP moveState;
     StateFP npcStandState;

@@ -41,7 +41,7 @@ void HandleEvents(Engine* engine)
     }
 }
 
-std::vector<Entity> OrderEntitiesByYpos(std::vector<Entity> entities)
+void OrderEntitiesByYpos(std::vector<Entity>& entities)
 {
     for(int i = 0; i < entities.size(); i++)
     {
@@ -55,13 +55,12 @@ std::vector<Entity> OrderEntitiesByYpos(std::vector<Entity> entities)
             }
         }
     }
-    return entities;
 }
 
 void UpdateAndRender(Engine* engine, float dt)
 {
     // update stuff     
-    engine->entities = OrderEntitiesByYpos(engine->entities);   
+    OrderEntitiesByYpos(engine->entities);
     for(int i = 0; i < engine->entities.size(); i++)
     {    
         engine->entities[i].sm.Update(dt, 4,
@@ -147,7 +146,6 @@ int main(int argc, char* argv[])
     LoadMap(&engine.map, "./assets/cMap2.lua", "./assets/rpg_indoor.bmp");
 
 
-
     engine.entities = LoadEntitiesFromLuaFile("./assets/EntityDef.lua");
 
     for(int i = 0; i < engine.entities.size(); i++)
@@ -175,7 +173,7 @@ int main(int argc, char* argv[])
         Teleport(&engine.entities[i], &engine.map, engine.entities[i].tileX, engine.entities[i].tileY); 
         if(engine.entities[i].type == 'h')
         {
-            engine.entities[i].defaultState = &engine.entities[i].waitState;
+            engine.entities[i].defaultState = engine.entities[i].waitState;
             engine.entities[i].sm.PushState(engine.entities[i].waitState, 1,
                                             (void*)&engine.entities[i]); 
         } 
@@ -183,13 +181,13 @@ int main(int argc, char* argv[])
         {
             if(strcmp(engine.entities[i].defStateName.c_str(), "npc_stand") == 0)
             {
-                engine.entities[i].defaultState = &engine.entities[i].npcStandState; 
+                engine.entities[i].defaultState = engine.entities[i].npcStandState; 
                 engine.entities[i].sm.PushState(engine.entities[i].npcStandState, 1,
                                                 (void*)&engine.entities[i]);
             }
             else if(strcmp(engine.entities[i].defStateName.c_str(), "plan_stroll") == 0)
             {
-                engine.entities[i].defaultState = &engine.entities[i].planStrollState; 
+                engine.entities[i].defaultState = engine.entities[i].planStrollState; 
                 engine.entities[i].sm.PushState(engine.entities[i].planStrollState, 1,
                                                 (void*)&engine.entities[i]);
             } 

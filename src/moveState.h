@@ -68,7 +68,7 @@ void MoveStateOnEnter(va_list* valist, int num)
     {
         entity->xMove = 0;
         entity->yMove = 0;
-        sm->ChangeState(*entity->defaultState, 4, (void*)entity,
+        sm->ChangeState(entity->defaultState, 4, (void*)entity,
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm);  
@@ -165,7 +165,7 @@ void MoveStateUpdate(va_list* valist, int num, float dt)
     if(entity->time >= 1.0f)
     {
         entity->time = 0.0f;
-        sm->ChangeState(*entity->defaultState, 4, (void*)entity,
+        sm->ChangeState(entity->defaultState, 4, (void*)entity,
                                               (void*)map,
                                               (void*)input,
                                               (void*)sm); 
