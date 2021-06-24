@@ -1,7 +1,6 @@
 #ifndef STATEMACHINE_H
 #define STATEMACHINE_H
 
-#include <vector>
 #include <cstdarg>
 
 // create tree callbacks functions 
@@ -23,7 +22,7 @@ void InitState(StateFP* state,
 
 struct StateMachineFP
 {
-    std::vector<StateFP> states; 
+    StateFP* states; 
     void PushState(StateFP state, int num, ...);
     void PopState(int num, ...);
     void ChangeState(StateFP state, int num, ...);

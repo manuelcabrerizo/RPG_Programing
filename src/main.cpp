@@ -6,6 +6,8 @@
 #define FPS 60
 #define FRAME_TARGET_TIME (1000 / FPS)
 
+int numberOfEntities;
+
 void HandleEvents(Engine* engine)
 {
     SDL_Event event;
@@ -41,11 +43,11 @@ void HandleEvents(Engine* engine)
     }
 }
 
-void OrderEntitiesByYpos(std::vector<Entity>& entities)
+void OrderEntitiesByYpos(Entity* entities)
 {
-    for(int i = 0; i < entities.size(); i++)
+    for(int i = 0; i < numberOfEntities; i++)
     {
-        for(int j = i; j < entities.size(); j++)
+        for(int j = i; j < numberOfEntities; j++)
         {
             if(entities[i].y > entities[j].y)
             {
@@ -59,15 +61,16 @@ void OrderEntitiesByYpos(std::vector<Entity>& entities)
 
 void UpdateAndRender(Engine* engine, float dt)
 {
-    // update stuff     
+    // update stuff 
     OrderEntitiesByYpos(engine->entities);
-    for(int i = 0; i < engine->entities.size(); i++)
-    {    
+    for(int i = 0; i < numberOfEntities; i++)
+    {  
         engine->entities[i].sm.Update(dt, 4,
                          (void*)&engine->entities[i],
                          (void*)&engine->map,
                          (void*)&engine->input,
                          (void*)&engine->entities[i].sm);
+
         UpdateEntityAnim(&engine->entities[i], dt);
         if(engine->entities[i].type == 'h')
         { 
@@ -89,7 +92,7 @@ void UpdateAndRender(Engine* engine, float dt)
     for(int i = 0; i < engine->map.numLayers; i++)
     {
         DrawMap(engine->colorBuffer, &engine->map, i);
-        for(int j = 0; j < engine->entities.size(); j++)
+        for(int j = 0; j < numberOfEntities; j++)
         {
             if(engine->entities[j].layer == i)
             {
@@ -144,15 +147,16 @@ int main(int argc, char* argv[])
                                              (int)WNDHEIGHT);
 
     LoadMap(&engine.map, "./assets/cMap2.lua", "./assets/rpg_indoor.bmp");
-    engine.entities = LoadEntitiesFromLuaFile("./assets/EntityDef.lua");
+    
+    engine.entities = LoadEntitiesFromLuaFileEx("./assets/EntityDef.lua", &numberOfEntities);
 
-    LoadEntitiesPositionsOnMap(&engine.map, engine.entities);
-
-    for(int i = 0; i < engine.entities.size(); i++)
+    for(int i = 0; i < numberOfEntities; i++)
     {
         engine.entities[i].actualAnim = engine.entities[i].downAnim;
     }
-    
+
+    LoadEntitiesPositionsOnMap(&engine.map, engine.entities, numberOfEntities);
+ 
     ReturnFunc TP0 = TeleportAction(&engine.map, 9, 6);
     ReturnFunc TP1 = TeleportAction(&engine.map, 9, 1);
     ReturnFunc TP2 = TeleportAction(&engine.map, 9, 10);
@@ -167,25 +171,26 @@ int main(int argc, char* argv[])
     std::map<int, Trigger> mapTriggers {{CoordToIndex(&engine.map, 9, 11), trigger1},
                                         {CoordToIndex(&engine.map, 9, 0), trigger2}};
     engine.map.triggers.push_back(mapTriggers); 
-
-    for(int i = 0; i < engine.entities.size(); i++)
+    
+    
+    for(int i = 0; i < numberOfEntities; i++)
     {   
-        Teleport(&engine.entities[i], &engine.map, engine.entities[i].tileX, engine.entities[i].tileY); 
+        Teleport(&engine.entities[i], &engine.map, engine.entities[i].tileX, engine.entities[i].tileY);
         if(engine.entities[i].type == 'h')
         {
             engine.entities[i].defaultState = engine.entities[i].waitState;
             engine.entities[i].sm.PushState(engine.entities[i].waitState, 1,
-                                            (void*)&engine.entities[i]); 
+                                            (void*)&engine.entities[i]);
         } 
         else if(engine.entities[i].type == 'n')
         {
-            if(strcmp(engine.entities[i].defStateName.c_str(), "npc_stand") == 0)
+            if(strcmp(engine.entities[i].defStateName, "npc_stand") == 0)
             {
                 engine.entities[i].defaultState = engine.entities[i].npcStandState; 
                 engine.entities[i].sm.PushState(engine.entities[i].npcStandState, 1,
                                                 (void*)&engine.entities[i]);
             }
-            else if(strcmp(engine.entities[i].defStateName.c_str(), "plan_stroll") == 0)
+            else if(strcmp(engine.entities[i].defStateName, "plan_stroll") == 0)
             {
                 engine.entities[i].defaultState = engine.entities[i].planStrollState; 
                 engine.entities[i].sm.PushState(engine.entities[i].planStrollState, 1,
@@ -193,7 +198,8 @@ int main(int argc, char* argv[])
             } 
         }  
     } 
-    
+
+
     engine.isRunning = true;
 
     uint32_t previusFrameTime = 0;

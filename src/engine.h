@@ -24,8 +24,8 @@ struct Engine
     Input input;
     
     Map map;
-    std::vector<Entity> entities;
-    //Entity hero; 
+    //std::vector<Entity> entities;
+    Entity* entities; 
 };
 
 int IntMax(int a, int b);

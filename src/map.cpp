@@ -57,7 +57,7 @@ Map LoadLuaMap(const char* filePath)
     return map; 
 }
 
-void LoadEntitiesPositionsOnMap(Map* map, std::vector<Entity> entities)
+void LoadEntitiesPositionsOnMap(Map* map, Entity* entities, int numberOfEntities)
 {
     for(int y = 0; y < map->height; y++)
     {
@@ -67,7 +67,7 @@ void LoadEntitiesPositionsOnMap(Map* map, std::vector<Entity> entities)
         }
     }
 
-    for(int i = 0; i < entities.size(); i++)
+    for(int i = 0; i < numberOfEntities; i++)
     {
         map->entityPositions[CoordToIndex(map, entities[i].tileX, entities[i].tileY)] = map->blockingTile;
     }

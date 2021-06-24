@@ -34,7 +34,7 @@ struct Entity
     float frameCount;
     float countDown;
     
-    std::string defStateName;
+    char* defStateName;
     StateFP defaultState; 
     StateFP waitState;
     StateFP moveState;
@@ -54,7 +54,6 @@ struct Entity
     StateMachineFP sm;
 };
 
-
 typedef void (*ReturnFunc)(Entity* entity, int index);
 
 struct Trigger
@@ -73,5 +72,6 @@ void LoadEntity(Entity* entity, const char* textureFilePath);
 int2 GetTileFoot(Map* map, int x, int y);
 int2 GetFacedTileCoords(Entity* entity);
 void Teleport(Entity* entity, Map* map, int tileX, int tileY);
-std::vector<Entity> LoadEntitiesFromLuaFile(const char* filePath);
+//std::vector<Entity> LoadEntitiesFromLuaFile(const char* filePath);
+Entity* LoadEntitiesFromLuaFileEx(const char* filePath, int* value);
 #endif

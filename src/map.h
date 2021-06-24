@@ -35,7 +35,7 @@ struct Map
 };
 
 Map LoadLuaMap(const char* filePath);
-void LoadEntitiesPositionsOnMap(Map* map, std::vector<Entity> entities);
+void LoadEntitiesPositionsOnMap(Map* map, Entity* entities, int numberOfEntities);
 void SetOccupiedTile(Map* map, int x, int y);
 void UnSetOccupiedTile(Map* map, int x, int y);
 void PointToTile(Map map, int left, int top, int x, int y, int& tileX, int& tileY);

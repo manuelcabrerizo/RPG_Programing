@@ -9,7 +9,7 @@ gEntities =
         frame = 8,
         tileX = 9,
         tileY = 2,
-        facing = "d",
+        facing = "l",
         layer = 0,
         anims = 
         {
@@ -51,7 +51,7 @@ gEntities =
         frame = 8,
         tileX = 3,
         tileY = 5,
-        facing = "d",
+        facing = "u",
         layer = 0,
         anims = 
         {
@@ -72,7 +72,7 @@ gEntities =
         frame = 8,
         tileX = 8,
         tileY = 9,
-        facing = "d",
+        facing = "l",
         layer = 0,
         anims = 
         {
@@ -93,7 +93,7 @@ gEntities =
         frame = 8,
         tileX = 9,
         tileY = 9,
-        facing = "d",
+        facing = "r",
         layer = 0,
         anims = 
         {

@@ -41,7 +41,7 @@ void WaitStateOnExit(va_list* valist, int num)
 }
 
 void WaitStateUpdate(va_list* valist, int num, float dt)
-{    
+{  
     Entity* entity = NULL;
     Map* map = NULL;
     Input* input = NULL;

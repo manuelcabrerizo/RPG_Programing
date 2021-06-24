@@ -36,6 +36,99 @@ void LoadEntity(Entity* entity, const char* textureFilePath)
     InitState(&entity->moveState, MoveStateOnEnter, MoveStateOnExit, MoveStateUpdate);
 }
 
+Entity* LoadEntitiesFromLuaFileEx(const char* filePath, int* value)
+{
+    sol::state lua; 
+    lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::math);
+    lua.script_file(filePath); 
+    sol::table luaEntities = lua["gEntities"];
+    Entity* entities;
+    int numberOfEntities = 0; 
+    // get the number of entities in the lua table.
+    for(;;)
+    {
+        sol::optional<sol::table> exist_entity = luaEntities[numberOfEntities];
+        if(exist_entity == sol::nullopt)
+        {
+            break;
+        }
+        numberOfEntities++;
+    }
+    // allocate memory for the entities
+    *value = numberOfEntities;
+
+    entities = (Entity*)malloc(numberOfEntities * sizeof(Entity));
+    if(entities == NULL)
+    {
+        printf("ERROR::ALLOCATING::MEMORY\n");
+    } 
+
+    for(int index = 0; index < numberOfEntities; index++)
+    {
+            Entity entity = {};
+            sol::table entityTable = luaEntities[index];
+ 
+            entity.frame = (int)entityTable["frame"]; 
+            entity.width = (int)entityTable["width"];
+            entity.height = (int)entityTable["height"];
+            entity.tileX = (int)entityTable["tileX"];
+            entity.tileY = (int)entityTable["tileY"];
+            std::string facingString = entityTable["facing"];
+            entity.facing = (char)facingString.c_str()[0];
+            std::string typeString = entityTable["type"];
+            entity.type = (char)typeString.c_str()[0];
+            entity.x = entity.tileX * entity.width;
+            entity.y = entity.tileY * entity.width; 
+            std::string texturePath = entityTable["texture"];
+            entity.image = LoadTexture(texturePath.c_str());
+            entity.uvs = GenerateUVs(entity.image,
+                                      entity.width,
+                                      entity.height);
+            entity.layer = (int)entityTable["layer"];
+
+            for(int i = 0; i < 4; i++)
+            {
+                entity.upAnim[i]    = (int)entityTable["anims"]["up"][i + 1] - 1;
+                entity.rightAnim[i] = (int)entityTable["anims"]["right"][i + 1] - 1;
+                entity.downAnim[i]  = (int)entityTable["anims"]["down"][i + 1] - 1;
+                entity.leftAnim[i]  = (int)entityTable["anims"]["left"][i + 1] - 1;
+            } 
+            entity.numFrames = 4;
+
+            for(int i = 0; i < (int)entityTable["numberOfStates"]; i++)
+            {
+                std::string stateName = entityTable["controller"][i + 1];
+                if(strcmp(stateName.c_str(), "wait") == 0)
+                {
+                    InitState(&entity.waitState, WaitStateOnEnter, WaitStateOnExit, WaitStateUpdate);
+                }
+                else if(strcmp(stateName.c_str(), "move") == 0)
+                {
+                    InitState(&entity.moveState, MoveStateOnEnter, MoveStateOnExit, MoveStateUpdate);
+                }
+                else if(strcmp(stateName.c_str(), "npc_stand") == 0)
+                {
+                    InitState(&entity.npcStandState, StandStateOnEnter, StandStateOnExit, StandStateUpdate);
+                }
+                else if(strcmp(stateName.c_str(), "plan_stroll") == 0)
+                {
+                    InitState(&entity.planStrollState, PlanStrollOnEnter, PlanStrollOnExit, PlanStrollUpdate);
+                }
+            }
+            
+            std::string temp = entityTable["state"];
+            entity.defStateName = (char*)malloc((temp.size() * sizeof(char)) + 1);
+            for(int strIndex = 0; strIndex < temp.size(); strIndex++)
+            {     
+                entity.defStateName[strIndex] = temp.data()[strIndex];
+            }
+            entity.defStateName[temp.size()] = '\0';           
+            entities[index] = entity;
+        }
+    return entities;
+}
+
+/*
 std::vector<Entity> LoadEntitiesFromLuaFile(const char* filePath)
 {
     sol::state lua; 
@@ -130,7 +223,7 @@ std::vector<Entity> LoadEntitiesFromLuaFile(const char* filePath)
     }
     return entities;
 }
-
+*/
 void UpdateEntityAnim(Entity* entity, float dt)
 {
     if(entity->numFrames > 1)
